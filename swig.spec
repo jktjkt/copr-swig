@@ -1,7 +1,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.1p5
-Release: 11
+Release: 12
 Copyright: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -12,9 +12,9 @@ BuildRoot: %{_tmppath}/swig-root
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
 development tool for connecting C, C++ and Objective C programs with a
-variety of high-level programming languages. SWIG is primarily used
+variety of high-level programming languages.  SWIG is primarily used
 with Perl, Python and Tcl/TK, but it has also been extended to Java,
-Eiffel and Guile. SWIG is normally used to create high-level
+Eiffel and Guile.  SWIG is normally used to create high-level
 interpreted programming environments, systems integration, and as a
 tool for building user interfaces.
 
@@ -47,8 +47,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/swig_lib
 
 %changelog
-* Wed Sep 12 2001 Tim Powers <timp@redhat.com>
-- rebuild with new gcc and binutils
+* Fri Feb  8 2002 Bill Nottingham <notting@redhat.com>
+- rebuild
+
+* Wed Jan 09 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
 
 * Fri Apr 27 2001 Nalin Dahyabhai <nalin@redhat.com>
 - use %%{_tmppath} instead of /var/tmp
