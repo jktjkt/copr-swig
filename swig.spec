@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.21
-Release: 3
+Release: 4
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -47,6 +47,10 @@ make DESTDIR=$RPM_BUILD_ROOT install install-runtime
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
 %files
 %defattr(-,root,root)
 %doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
@@ -57,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/swig.m4
 
 %changelog
+* Wed Sep 22 2004 Florian La Roche <Florian.LaRoche@redhat.de>
+- add ldconfig calls to post/postun
+
 * Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
 - rebuilt
 
