@@ -4,13 +4,14 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.21
-Release: 4
+Release: 5
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
 Patch1: swig-1.3.19-pylib.patch
 Patch2: swig-1.3.21-destdir.patch
+Patch3: swig-1.3.21-ldflags.patch
 BuildRoot: %{_tmppath}/swig-root
 BuildPrereq: perl, python-devel
 %if %{tcl}
@@ -33,6 +34,7 @@ tool for building user interfaces.
 %setup -q -n SWIG-%{version}
 %patch1 -p1 -b .pylib
 %patch2 -p1 -b .destdir
+%patch3 -p1 -b .ldflags
 
 %build
 ./autogen.sh
@@ -61,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/swig.m4
 
 %changelog
+* Thu Sep 30 2004 Joe Orton <jorton@redhat.com> 1.3.21-5
+- don't output -L$libdir in -ldflags
+
 * Wed Sep 22 2004 Florian La Roche <Florian.LaRoche@redhat.de>
 - add ldconfig calls to post/postun
 
