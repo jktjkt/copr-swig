@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.21
-Release: 5
+Release: 6
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -15,7 +15,7 @@ Patch3: swig-1.3.21-ldflags.patch
 BuildRoot: %{_tmppath}/swig-root
 BuildPrereq: perl, python-devel
 %if %{tcl}
-BuildPrereq: tcl
+BuildPrereq: tcl-devel
 %endif
 %if %{guile}
 BuildPrereq: guile-devel
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/swig.m4
 
 %changelog
+* Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com> 1.3.21-6
+- Build requires tcl-devel (bug #134788).
+
 * Thu Sep 30 2004 Joe Orton <jorton@redhat.com> 1.3.21-5
 - don't output -L$libdir in -ldflags
 
