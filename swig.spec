@@ -1,15 +1,24 @@
+%{!?tcl:%define tcl 1}
+%{!?guile:%define guile 1}
+
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.1p5
-Release: 22
-Copyright: BSD
+Version: 1.3.19
+Release: 5
+License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
-Source: http://download.sourceforge.net/swig/swig1.1p5.tar.gz
-Source1: ftp://ftp.cs.utah.edu/pub/beazley/SWIG/swigdoc_html.tar.bz2
-Patch1: swig1.1p5-multilib.patch
-Patch2: swig1.1p5-ia64.patch
+Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
+Patch: swig-1.3.19-lib64.patch
+Patch1: swig-1.3.19-pylib.patch
 BuildRoot: %{_tmppath}/swig-root
+BuildPrereq: perl, python-devel
+%if %{tcl}
+BuildPrereq: tcl
+%endif
+%if %{guile}
+BuildPrereq: guile-devel
+%endif
 
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
@@ -21,36 +30,52 @@ interpreted programming environments, systems integration, and as a
 tool for building user interfaces.
 
 %prep
-%setup -q -n SWIG1.1p5 -a1
-%patch1 -p1 -b .multilib
-%patch2 -p1 -b .ia64
+%setup -q -n SWIG-%{version}
+%patch -p1 -b .lib64
+%patch1 -p1 -b .pylib
 
 %build
+./autogen.sh
 %configure
 make
 make runtime
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_mandir},%{_includedir}}
-%makeinstall MAN_DIR=$RPM_BUILD_ROOT%{_mandir}/man1 LIB_DIR=$RPM_BUILD_ROOT%{_libdir}
+#mkdir -p $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_mandir},%{_includedir}}
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc SWIGDoc1.1/* 
-%doc CHANGES Copyright INSTALL NEW README TROUBLESHOOTING ToDo 
+%doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
 %doc Doc/*
 %{_bindir}/*
-%{_includedir}/*
-%{_mandir}/*/*
 %{_libdir}/*.a
+%{_libdir}/*.la
 %{_libdir}/*.so
-%{_libdir}/swig_lib
+%{_libdir}/swig1.3
 
 %changelog
+* Tue Sep 23 2003 Florian La Roche <Florian.LaRoche@redhat.de>
+- allow compiling without tcl/guile
+
+* Wed Jun 04 2003 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Sun May 18 2003 Joe Orton <jorton@redhat.com> 1.3.19-3
+- patch to pick up python libdir correctly
+
+* Sun May 18 2003 Joe Orton <jorton@redhat.com> 1.3.19-2
+- add BuildPrereqs to ensure all bindings are built
+
+* Wed May 14 2003 Phil Knirsch <pknirsch@redhat.com> 1.3.19-1
+- Update to swig-1.3.19
+- Major cleanup in specfile, too. :-)
+- New lib64 fix.
+
 * Wed Jan 22 2003 Tim Powers <timp@redhat.com>
 - rebuilt
 
