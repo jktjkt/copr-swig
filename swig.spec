@@ -3,14 +3,14 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.3.19
-Release: 6.1
+Version: 1.3.21
+Release: 1
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
-Patch: swig-1.3.19-lib64.patch
 Patch1: swig-1.3.19-pylib.patch
+Patch2: swig-1.3.21-destdir.patch
 BuildRoot: %{_tmppath}/swig-root
 BuildPrereq: perl, python-devel
 %if %{tcl}
@@ -31,8 +31,8 @@ tool for building user interfaces.
 
 %prep
 %setup -q -n SWIG-%{version}
-%patch -p1 -b .lib64
 %patch1 -p1 -b .pylib
+%patch2 -p1 -b .destdir
 
 %build
 ./autogen.sh
@@ -42,7 +42,6 @@ make runtime
 
 %install
 rm -rf $RPM_BUILD_ROOT
-#mkdir -p $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_mandir},%{_includedir}}
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
@@ -53,12 +52,13 @@ rm -rf $RPM_BUILD_ROOT
 %doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
 %doc Doc/*
 %{_bindir}/*
-%{_libdir}/*.a
-%{_libdir}/*.la
-%{_libdir}/*.so
 %{_libdir}/swig1.3
+%{_datadir}/aclocal/swig.m4
 
 %changelog
+* Tue May 04 2004 Phil Knirsch <pknirsch@redhat.com>
+- Update to swig-1.3.21
+
 * Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
 - rebuilt
 
