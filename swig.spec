@@ -3,15 +3,13 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.3.21
-Release: 7
+Version: 1.3.23
+Release: 1
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
-Patch1: swig-1.3.19-pylib.patch
-Patch2: swig-1.3.21-destdir.patch
-Patch3: swig-1.3.21-ldflags.patch
+Patch1: swig-1.3.23-pylib.patch
 BuildRoot: %{_tmppath}/swig-root
 BuildPrereq: perl, python-devel
 %if %{tcl}
@@ -33,14 +31,12 @@ tool for building user interfaces.
 %prep
 %setup -q -n SWIG-%{version}
 %patch1 -p1 -b .pylib
-%patch2 -p1 -b .destdir
-%patch3 -p1 -b .ldflags
 
 %build
 ./autogen.sh
 %configure
 make
-make runtime
+#make check
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -60,9 +56,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{_libdir}/lib*.*
 %{_libdir}/swig1.3
-%{_datadir}/aclocal/swig.m4
 
 %changelog
+* Tue Nov 23 2004 Karsten Hopp <karsten@redhat.de> 1.3.23-1 
+- update
+- new pylib patch
+- remove destdir patch, swig.m4 is no longer included
+- remove ldconfig patch, swig now uses *-config to find out linker options
+
 * Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 1.3.21-7
 - rebuild against python 2.4
 
