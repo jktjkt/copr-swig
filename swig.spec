@@ -1,13 +1,14 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.1p5
-Release: 19
+Release: 20
 Copyright: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig1.1p5.tar.gz
 Source1: ftp://ftp.cs.utah.edu/pub/beazley/SWIG/swigdoc_html.tar.bz2
 Patch1: swig1.1p5-multilib.patch
+Patch2: swig1.1p5-ia64.patch
 BuildRoot: %{_tmppath}/swig-root
 
 %description
@@ -22,6 +23,7 @@ tool for building user interfaces.
 %prep
 %setup -q -n SWIG1.1p5 -a1
 %patch1 -p1 -b .multilib
+%patch2 -p1 -b .ia64
 
 %build
 %configure
@@ -49,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/swig_lib
 
 %changelog
+* Fri Aug 30 2002 Phil Knirsch <pknirsch@redhat.com> 1.1p5-20
+- Patch by Lon Hohberger for ia64.
+
 * Wed Aug 28 2002 Phil Knirsch <pknirsch@redhat.com> 1.1p5-19
 - Added multilib safe patch from arjan (#72523)
 
