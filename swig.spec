@@ -40,7 +40,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make DESTDIR=$RPM_BUILD_ROOT install install-runtime
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -54,8 +54,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
 %doc Doc/*
 %{_bindir}/*
-%{_libdir}/lib*.*
-%{_libdir}/swig1.3
+%{_datadir}/swig/*
 
 %changelog
 * Tue Nov 23 2004 Karsten Hopp <karsten@redhat.de> 1.3.23-1 
