@@ -1,7 +1,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.1p5
-Release: 20
+Release: 22
 Copyright: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -33,7 +33,7 @@ make runtime
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_mandir},%{_includedir}}
-%makeinstall MAN_DIR=$RPM_BUILD_ROOT%{_mandir}/man1 
+%makeinstall MAN_DIR=$RPM_BUILD_ROOT%{_mandir}/man1 LIB_DIR=$RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -51,6 +51,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/swig_lib
 
 %changelog
+* Wed Jan 22 2003 Tim Powers <timp@redhat.com>
+- rebuilt
+
+* Wed Nov 27 2002 Tim Powers <timp@redhat.com> 1.1p5-21
+- lib64'ize
+
 * Fri Aug 30 2002 Phil Knirsch <pknirsch@redhat.com> 1.1p5-20
 - Patch by Lon Hohberger for ia64.
 
