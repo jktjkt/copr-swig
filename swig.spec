@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.21
-Release: 6
+Release: 7
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/swig.m4
 
 %changelog
+* Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 1.3.21-7
+- rebuild against python 2.4
+
 * Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com> 1.3.21-6
 - Build requires tcl-devel (bug #134788).
 
