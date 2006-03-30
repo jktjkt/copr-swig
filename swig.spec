@@ -3,8 +3,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.3.24
-Release: 2.2.1
+Version: 1.3.29
+Release: 0
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -29,7 +29,7 @@ interpreted programming environments, systems integration, and as a
 tool for building user interfaces.
 
 %prep
-%setup -q -n SWIG-%{version}
+%setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
 
 %build
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig/*
 
 %changelog
+* Tue Mar 28 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0
+- update to swig-1.2.29-0
+
 * Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 1.3.24-2.2.1
 - bump again for double-long bug on ppc(64)
 
