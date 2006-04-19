@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.29
-Release: 0
+Release: 0.1
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -54,9 +54,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
 %doc Doc/*
 %{_bindir}/*
-%{_datadir}/swig/*
+%{_datadir}/swig
 
 %changelog
+* Wed Apr 19 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29.0.1
+- folder /usr/share/swig should be owned by swig package (bug #189145)
+
 * Tue Mar 28 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0
 - update to swig-1.2.29-0
 
