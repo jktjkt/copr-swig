@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.29
-Release: 0.1
+Release: 0.2
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -17,6 +17,7 @@ BuildPrereq: tcl-devel
 %endif
 %if %{guile}
 BuildPrereq: guile-devel
+BuildRequires: autoconf, automake
 %endif
 
 %description
@@ -57,7 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig
 
 %changelog
-* Wed Apr 19 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29.0.1
+* Fri Jun 30 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.2 
+- Build requires autoconf, automake (bug #197132)
+
+* Wed Apr 19 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.1
 - folder /usr/share/swig should be owned by swig package (bug #189145)
 
 * Tue Mar 28 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0
