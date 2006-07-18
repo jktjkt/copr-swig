@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.29
-Release: 0.2
+Release: 0.3
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig
 
 %changelog
+* Tue Jul 18 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.3
+- rebuilt 
+
 * Fri Jun 30 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.2 
 - Build requires autoconf, automake (bug #197132)
 
