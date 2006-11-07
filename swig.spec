@@ -4,12 +4,13 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.29
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
+Patch2: swig-arch.patch
 BuildRoot: %{_tmppath}/swig-root
 BuildPrereq: perl, python-devel
 %if %{tcl}
@@ -32,6 +33,7 @@ tool for building user interfaces.
 %prep
 %setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
+%patch2 -p0 -b .arch
 
 %build
 ./autogen.sh
@@ -58,6 +60,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig
 
 %changelog
+* Tue Nov 07 2006 Adam Tkac <atkac@redhat.com> 1.3.29-2
+- swig can determine architecture now (#211095)
+
+
 * Mon Aug 28 2006 Jitka Kudrnacova <jkudrnac@redhat.com> -1.3.29-1
 -rebuilt 
 
