@@ -18,7 +18,7 @@ BuildPrereq: tcl-devel
 %endif
 %if %{guile}
 BuildPrereq: guile-devel
-BuildRequires: autoconf, automake
+BuildRequires: autoconf, automake, gawk
 %endif
 
 %description
@@ -62,6 +62,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Aug 22 2007 Adam Tkac <atkac redhat com> 1.31.1-1
 - rebuild (BuildID feature)
+- BuildRequires gawk
 
 * Tue Nov 28 2006 Adam Tkac <atkac redhat.com> 1.31.1-0
 - updated to 1.2.31 (#216991)
