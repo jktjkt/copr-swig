@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.31
-Release: 0%{?dist}
+Release: 1%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -38,7 +38,7 @@ tool for building user interfaces.
 %build
 ./autogen.sh
 %configure
-make
+make %{?_smp_mflags}
 #make check
 
 %install
@@ -60,7 +60,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig
 
 %changelog
-* Tue Nov 28 2006 Adam Tkac <atkac redhat.com> 1.31.1-0.fc7
+* Wed Aug 22 2007 Adam Tkac <atkac redhat com> 1.31.1-1
+- rebuild (BuildID feature)
+
+* Tue Nov 28 2006 Adam Tkac <atkac redhat.com> 1.31.1-0
 - updated to 1.2.31 (#216991)
 
 * Tue Nov 07 2006 Adam Tkac <atkac@redhat.com> 1.3.29-2
