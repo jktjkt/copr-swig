@@ -3,22 +3,22 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.3.33
-Release: 2%{?dist}
+Version: 1.3.35
+Release: 1%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
 BuildRoot: %{_tmppath}/swig-root
-BuildPrereq: perl, python-devel
+BuildRequires: perl, python-devel
 %if %{tcl}
-BuildPrereq: tcl-devel
+BuildRequires: tcl-devel
 %endif
 %if %{guile}
-BuildPrereq: guile-devel
-BuildRequires: autoconf, automake, gawk
+BuildRequires: guile-devel
 %endif
+BuildRequires: autoconf, automake, gawk
 
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig
 
 %changelog
+* Mon May 05 2008 Adam Tkac <atkac redhat com> 1.3.35-1
+- updated to latest upstream release
+
 * Mon Feb 18 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1.3.33-2
 - Autorebuild for GCC 4.3
 
