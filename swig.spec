@@ -3,18 +3,13 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.3.35
-Release: 2%{?dist}
+Version: 1.3.36
+Release: 1%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
-
-# XXX This patch will be never accepted by upstream
-# https://sourceforge.net/tracker/?func=detail&atid=101645&aid=1604332&group_id=1645
-# but it is typical distribution patch and should be kept downstream
-Patch2: swig-arch.patch
 
 BuildRoot: %{_tmppath}/swig-root
 BuildRequires: perl, python-devel
@@ -38,7 +33,6 @@ tool for building user interfaces.
 %prep
 %setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
-%patch2 -p1 -b .arch
 
 %build
 ./autogen.sh
@@ -48,6 +42,8 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+# XXX workaround for https://bugzilla.redhat.com/show_bug.cgi?id=470811
+rm -f Doc/Manual/Perl5.html
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
@@ -65,6 +61,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig
 
 %changelog
+* Mon Nov 10 2008 Adam Tkac <atkac redhat com> 1.3.36-1
+- updated to 1.3.36
+- finally dropped swig-arch.patch
+- temporary workaround rpm bug #470811
+
 * Fri May 16 2008 Adam Tkac <atkac redhat com> 1.3.35-2
 - readded swig-arch.patch, will be kept downstream
 
