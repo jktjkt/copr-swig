@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.36
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -42,8 +42,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-# XXX workaround for https://bugzilla.redhat.com/show_bug.cgi?id=470811
-rm -f Doc/Manual/Perl5.html
+
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
@@ -61,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/swig
 
 %changelog
+* Thu Dec 04 2008 Adam Tkac <atkac redhat com> 1.3.36-2
+- #470811 is fixed => dropped workaround
+
 * Mon Nov 10 2008 Adam Tkac <atkac redhat com> 1.3.36-1
 - updated to 1.3.36
 - finally dropped swig-arch.patch
