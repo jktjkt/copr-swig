@@ -4,12 +4,13 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.38
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
+Patch2: swig-1.3.38-rh485540.patch
 
 BuildRoot: %{_tmppath}/swig-root
 BuildRequires: perl, python-devel
@@ -33,6 +34,7 @@ tool for building user interfaces.
 %prep
 %setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
+%patch2 -p1 -b .rh485540
 
 %build
 ./autogen.sh
@@ -61,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ccache-swig.1*
 
 %changelog
+* Mon Feb 16 2009 Adam Tkac <atkac redhat com> 1.3.38-2
+- handle -co option gracefully (#485540)
+
 * Thu Feb 12 2009 Adam Tkac <atkac redhat com> 1.3.38-1
 - updated to 1.3.38
 
