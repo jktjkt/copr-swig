@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.38
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -12,7 +12,7 @@ Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
 Patch2: swig-1.3.38-rh485540.patch
 
-BuildRoot: %{_tmppath}/swig-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel
 %if %{tcl}
 BuildRequires: tcl-devel
@@ -31,6 +31,15 @@ Eiffel and Guile.  SWIG is normally used to create high-level
 interpreted programming environments, systems integration, and as a
 tool for building user interfaces.
 
+%package doc
+Summary: Documentation files for SWIG
+License: BSD
+Group: Development/Tools
+BuildArch: noarch
+
+%description doc
+This package contains documentation for SWIG and useful examples.
+
 %prep
 %setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
@@ -45,6 +54,13 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 
+# Remove all arch dependent files in Examples/
+pushd Examples/
+for all in `find Makefile.in`; do
+    rm -f "${all%%.in}"
+done
+popd
+
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
@@ -56,13 +72,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
-%doc Doc/*
 %{_bindir}/*
 %{_datadir}/swig
 %{_mandir}/man1/ccache-swig.1*
 
+%files doc
+%doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
+%doc Doc Examples
+
 %changelog
+* Mon Mar 09 2009 Adam Tkac <atkac redhat com> 1.3.38-4
+- moved documentation to -doc subpackage and build it as noarch
+- added Example/ directory to -doc (#489077)
+- fixed build root
+
 * Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.38-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
