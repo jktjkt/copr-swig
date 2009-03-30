@@ -3,14 +3,13 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.3.38
-Release: 5%{?dist}
+Version: 1.3.39
+Release: 1%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://download.sourceforge.net/swig/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
-Patch2: swig-1.3.38-rh485540.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel
@@ -43,7 +42,26 @@ This package contains documentation for SWIG and useful examples.
 %prep
 %setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
-%patch2 -p1 -b .rh485540
+
+
+# as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
+# (specific req/prov filtering). Before you remove this hack make sure you don't
+# reintroduce https://bugzilla.redhat.com/show_bug.cgi?id=489421
+cat << \EOF > %{name}-prov
+#!/bin/sh
+%{__perl_provides} `perl -p -e 's|\S+%{_docdir}/%{name}-doc-%{version}\S+||'`
+EOF
+
+%define __perl_provides %{_builddir}/%{name}-%{version}/%{name}-prov
+chmod +x %{__perl_provides}
+
+cat << \EOF > %{name}-req
+#!/bin/sh
+%{__perl_requires} `perl -p -e 's|\S+%{_docdir}/%{name}-doc-%{version}\S+||'`
+EOF
+
+%define __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
+chmod +x %{__perl_requires}
 
 %build
 ./autogen.sh
@@ -78,9 +96,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files doc
 %doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
-%doc Doc
+%doc Doc Examples
 
 %changelog
+* Mon Mar 30 2009 Adam Tkac <atkac redhat com> 1.3.39-1
+- update to 1.3.39
+- swig-1.3.38-rh485540.patch was merged
+- add Example/ to -doc again (#489077), filter provides correctly
+
 * Tue Mar 10 2009 Adam Tkac <atkac redhat com> 1.3.38-5
 - revert #489077 enhancement due #489421
 
