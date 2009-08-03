@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 1.3.39
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -99,6 +99,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc Doc Examples
 
 %changelog
+* Mon Aug 03 2009 Adam Tkac <atkac redhat com> 1.3.39-3
+- rebuilt
+
 * Sun Jul 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.39-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
