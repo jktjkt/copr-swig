@@ -3,8 +3,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 1.3.39
-Release: 4%{?dist}
+Version: 1.3.40
+Release: 1%{?dist}
 License: BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -99,6 +99,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc Doc Examples
 
 %changelog
+* Wed Sep 02 2009 Adam Tkac <atkac redhat com> 1.3.40-1
+- update to 1.3.40
+
 * Tue Aug 11 2009 Adam Tkac <atkac redhat com> 1.3.39-4
 - correct source URL
 
