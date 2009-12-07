@@ -1,11 +1,11 @@
 %{!?tcl:%define tcl 1}
 %{!?guile:%define guile 1}
 
-Summary: Connects C/C++/Objective C to some high-level programming languages.
+Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 1.3.40
-Release: 1%{?dist}
-License: BSD
+Release: 2%{?dist}
+License: BSD and MIT
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -19,7 +19,7 @@ BuildRequires: tcl-devel
 %if %{guile}
 BuildRequires: guile-devel
 %endif
-BuildRequires: autoconf, automake, gawk
+BuildRequires: autoconf, automake, gawk, dos2unix
 
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
@@ -28,7 +28,7 @@ variety of high-level programming languages.  SWIG is primarily used
 with Perl, Python and Tcl/TK, but it has also been extended to Java,
 Eiffel and Guile.  SWIG is normally used to create high-level
 interpreted programming environments, systems integration, and as a
-tool for building user interfaces.
+tool for building user interfaces
 
 %package doc
 Summary: Documentation files for SWIG
@@ -37,7 +37,7 @@ Group: Development/Tools
 BuildArch: noarch
 
 %description doc
-This package contains documentation for SWIG and useful examples.
+This package contains documentation for SWIG and useful examples
 
 %prep
 %setup -q -n swig-%{version}
@@ -63,19 +63,36 @@ EOF
 %define __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
 chmod +x %{__perl_requires}
 
+for all in CHANGES README; do
+	iconv -f ISO88591 -t UTF8 < $all > $all.new
+	touch -r $all $all.new
+	mv -f $all.new $all
+done
+
 %build
 ./autogen.sh
 %configure
 make %{?_smp_mflags}
+
+# Test suite is currently broken
 #make check
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-# Remove all arch dependent files in Examples/
 pushd Examples/
-for all in `find Makefile.in`; do
-    rm -f "${all%%.in}"
+# Remove all arch dependent files in Examples/
+find -type f -name 'Makefile.in' | xargs rm -f --
+
+# We don't want to ship files below.
+rm -rf test-suite
+find -type f -name '*.dsp' | xargs rm -f --
+find -type f -name '*.dsw' | xargs rm -f --
+
+# Convert files to UNIX format
+for all in `find -type f`; do
+	dos2unix -k $all
+	chmod -x $all
 done
 popd
 
@@ -84,21 +101,21 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
-
 %files
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 %{_bindir}/*
 %{_datadir}/swig
 %{_mandir}/man1/ccache-swig.1*
+%doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
 
 %files doc
-%doc ANNOUNCE CHANGES FUTURE INSTALL LICENSE NEW README TODO
+%defattr(-,root,root,-)
 %doc Doc Examples
 
 %changelog
+* Mon Dec 07 2009 Adam Tkac <atkac redhat com> 1.3.40-2
+- package review related fixes (#226442)
+
 * Wed Sep 02 2009 Adam Tkac <atkac redhat com> 1.3.40-1
 - update to 1.3.40
 
