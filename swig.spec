@@ -52,7 +52,7 @@ cat << \EOF > %{name}-prov
 %{__perl_provides} `perl -p -e 's|\S+%{_docdir}/%{name}-doc-%{version}\S+||'`
 EOF
 
-%define __perl_provides $RPM_BUILD_DIR/%{name}-%{version}/%{name}-prov
+%define __perl_provides %{_builddir}/%{name}-%{version}/%{name}-prov
 chmod +x %{__perl_provides}
 
 cat << \EOF > %{name}-req
@@ -60,7 +60,7 @@ cat << \EOF > %{name}-req
 %{__perl_requires} `perl -p -e 's|\S+%{_docdir}/%{name}-doc-%{version}\S+||'`
 EOF
 
-%define __perl_requires $RPM_BUILD_DIR/%{name}-%{version}/%{name}-req
+%define __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
 chmod +x %{__perl_requires}
 
 for all in CHANGES README; do
@@ -78,7 +78,7 @@ make %{?_smp_mflags}
 #make check
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 pushd Examples/
 # Remove all arch dependent files in Examples/
@@ -96,10 +96,10 @@ for all in `find -type f`; do
 done
 popd
 
-make DESTDIR=$RPM_BUILD_ROOT install
+make DESTDIR=%{buildroot} install
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
