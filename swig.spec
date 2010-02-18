@@ -4,8 +4,8 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 1.3.40
-Release: 3%{?dist}
-License: GPLv2+ and LGPL
+Release: 4%{?dist}
+License: GPLv2+ and LGPL and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -113,6 +113,9 @@ rm -rf %{buildroot}
 %doc Doc Examples
 
 %changelog
+* Thu Feb 18 2010 Adam Tkac <atkac redhat com> 1.3.40-4
+- correct license field again
+
 * Thu Feb 18 2010 Adam Tkac <atkac redhat com> 1.3.40-3
 - correct license field
 
