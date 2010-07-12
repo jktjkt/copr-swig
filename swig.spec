@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -106,13 +106,18 @@ rm -rf %{buildroot}
 %{_bindir}/*
 %{_datadir}/swig
 %{_mandir}/man1/ccache-swig.1*
-%doc ANNOUNCE CHANGES CHANGES.current INSTALL LICENSE README TODO
+%doc ANNOUNCE CHANGES CHANGES.current INSTALL LICENSE LICENSE-GPL
+%doc LICENSE-UNIVERSITIES COPYRIGHT README TODO
 
 %files doc
 %defattr(-,root,root,-)
-%doc Doc Examples
+%doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Mon Jul 12 2010 Adam Tkac <atkac redhat com> 2.0.0-2
+- add LICENSE-GPL, LICENSE-UNIVERSITIES and COPYRIGHT to %%doc
+- include all license files in the -doc subpkg
+
 * Thu Jun 24 2010 Adam Tkac <atkac redhat com> 2.0.0-1
 - update to 2.0.0
 - license changed to GPLv3+ and BSD
