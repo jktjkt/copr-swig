@@ -1,6 +1,6 @@
 diff -up swig-2.0.0/Lib/python/pyrun.swg.rh623854 swig-2.0.0/Lib/python/pyrun.swg
---- swig-2.0.0/Lib/python/pyrun.swg.rh623854	2010-08-17 14:18:36.998343153 +0200
-+++ swig-2.0.0/Lib/python/pyrun.swg	2010-08-17 14:32:16.880249117 +0200
+--- swig-2.0.0/Lib/python/pyrun.swg.rh623854	2010-02-28 00:26:02.000000000 +0100
++++ swig-2.0.0/Lib/python/pyrun.swg	2010-08-17 16:32:16.581604656 +0200
 @@ -45,8 +45,18 @@
  #define SWIG_SetErrorMsg                        	SWIG_Python_SetErrorMsg				   
  #define SWIG_ErrorType(code)                    	SWIG_Python_ErrorType(code)                        
@@ -16,7 +16,7 @@ diff -up swig-2.0.0/Lib/python/pyrun.swg.rh623854 swig-2.0.0/Lib/python/pyrun.sw
 +     (PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION > 0))
 +#define USE_CAPSULES
 +#define TYPE_POINTER_NAME \
-+    ((char*)"swig_runtime_data" SWIG_RUNTIME_VERSION ".type_pointer" SWIG_TYPE_TABLE_NAME)
++    ((char*)"swig_runtime_data" SWIG_RUNTIME_VERSION ".type_pointer_capsule" SWIG_TYPE_TABLE_NAME)
 +#endif
  
  /* Runtime API implementation */
@@ -50,7 +50,7 @@ diff -up swig-2.0.0/Lib/python/pyrun.swg.rh623854 swig-2.0.0/Lib/python/pyrun.sw
    for (i =0; i < swig_module->size; ++i) {
      swig_type_info *ty = types[i];
      if (ty->owndata) {
-@@ -1426,7 +1445,12 @@ SWIG_Python_SetModule(swig_module_info *
+@@ -1426,9 +1445,18 @@ SWIG_Python_SetModule(swig_module_info *
    PyObject *module = Py_InitModule((char*)"swig_runtime_data" SWIG_RUNTIME_VERSION,
  				   swig_empty_runtime_method_table);
  #endif
@@ -61,9 +61,15 @@ diff -up swig-2.0.0/Lib/python/pyrun.swg.rh623854 swig-2.0.0/Lib/python/pyrun.sw
    PyObject *pointer = PyCObject_FromVoidPtr((void *) swig_module, SWIG_Python_DestroyModule);
 +#endif
    if (pointer && module) {
++#ifdef USE_CAPSULES
++    PyModule_AddObject(module, (char*)"type_pointer_capsule" SWIG_TYPE_TABLE_NAME, pointer);
++#else
      PyModule_AddObject(module, (char*)"type_pointer" SWIG_TYPE_TABLE_NAME, pointer);
++#endif
    } else {
-@@ -1449,12 +1473,20 @@ SWIG_Python_TypeQuery(const char *type)
+     Py_XDECREF(pointer);
+   }
+@@ -1449,12 +1477,20 @@ SWIG_Python_TypeQuery(const char *type)
    PyObject *obj = PyDict_GetItem(cache, key);
    swig_type_info *descriptor;
    if (obj) {
