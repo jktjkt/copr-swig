@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -115,6 +115,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri Aug 27 2010 Adam Tkac <atkac redhat com> 2.0.0-5
+- make PyCObjects->PyCapsule patch C++ compatible (#627310)
+
 * Fri Aug 20 2010 Adam Tkac <atkac redhat com> 2.0.0-4
 - improve patch for #623854 (PyCObjects->PyCapsule transition)
 
