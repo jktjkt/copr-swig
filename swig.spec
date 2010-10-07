@@ -3,8 +3,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
-Version: 2.0.0
-Release: 5%{?dist}
+Version: 2.0.1
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -13,7 +13,7 @@ Patch1: swig-1.3.23-pylib.patch
 Patch2: swig200-rh623854.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: perl, python-devel
+BuildRequires: perl, python-devel, pcre-devel
 %if %{tcl}
 BuildRequires: tcl-devel
 %endif
@@ -115,6 +115,10 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Oct 07 2010 Adam Tkac <atkac redhat com> 2.0.1-1
+- update to 2.0.1 (#640354)
+- BR pcre-devel
+
 * Fri Aug 27 2010 Adam Tkac <atkac redhat com> 2.0.0-5
 - make PyCObjects->PyCapsule patch C++ compatible (#627310)
 
