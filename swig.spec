@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Wed Feb 16 2011 Adam Tkac <atkac redhat com> 2.0.1-4
+- improve fix for PySlice issue (#666429)
+
 * Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
