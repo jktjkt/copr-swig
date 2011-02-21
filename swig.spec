@@ -3,8 +3,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
-Version: 2.0.1
-Release: 4%{?dist}
+Version: 2.0.2
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Mon Feb 21 2011 Adam Tkac <atkac redhat com> 2.0.2-1
+- update to 2.0.2
+
 * Wed Feb 16 2011 Adam Tkac <atkac redhat com> 2.0.1-4
 - improve fix for PySlice issue (#666429)
 
