@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -12,6 +12,7 @@ Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-
 Patch1: swig-1.3.23-pylib.patch
 Patch2: swig200-rh623854.patch
 Patch3: swig200-rh666429.patch
+Patch4: swig203-rh706140.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -46,6 +47,7 @@ This package contains documentation for SWIG and useful examples
 %patch1 -p1 -b .pylib
 %patch2 -p1 -b .rh623854
 %patch3 -p1 -b .rh666429
+%patch4 -p1 -b .rh706140
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -117,6 +119,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri May 20 2011 Adam Tkac <atkac redhat com> 2.0.3-2
+- make guile generator compatible with guile2 (#706140)
+
 * Fri Apr 22 2011 Adam Tkac <atkac redhat com> 2.0.3-1
 - update to 2.0.3
 - swig202-rh691513.patch merged
