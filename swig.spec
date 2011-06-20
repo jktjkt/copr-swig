@@ -3,15 +3,13 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
-Version: 2.0.3
-Release: 3%{?dist}
+Version: 2.0.4
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
-Patch2: swig200-rh623854.patch
-Patch3: swig200-rh666429.patch
 Patch4: swig203-rh706140.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -45,8 +43,6 @@ This package contains documentation for SWIG and useful examples
 %prep
 %setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
-%patch2 -p1 -b .rh623854
-%patch3 -p1 -b .rh666429
 %patch4 -p1 -b .rh706140
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
@@ -119,6 +115,12 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Mon Jun 20 2011 Adam Tkac <atkac redhat com> 2.0.4-1
+- update to 2.0.4
+- patches merged
+  - swig200-rh666429.patch
+  - swig200-rh623854.patch
+
 * Mon Jun 20 2011 Marcela Mašláňová <mmaslano@redhat.com> 2.0.3-3
 - Perl mass rebuild
 
