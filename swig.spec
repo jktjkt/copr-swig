@@ -4,13 +4,16 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 Patch1: swig-1.3.23-pylib.patch
 Patch4: swig203-rh706140.patch
+Patch5: swig204-rh753321.patch
+Patch6: swig204-rh752054.patch
+Patch7: swig204-rh679948.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -20,7 +23,7 @@ BuildRequires: tcl-devel
 %if %{guile}
 BuildRequires: guile-devel
 %endif
-BuildRequires: autoconf, automake, gawk, dos2unix
+BuildRequires: autoconf, automake, gawk, dos2unix, octave-devel
 
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
@@ -44,6 +47,9 @@ This package contains documentation for SWIG and useful examples
 %setup -q -n swig-%{version}
 %patch1 -p1 -b .pylib
 %patch4 -p1 -b .rh706140
+%patch5 -p0 -b .rh753321
+%patch6 -p1 -b .rh752054
+%patch7 -p0 -b .rh679948
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -72,7 +78,7 @@ done
 
 %build
 ./autogen.sh
-%configure
+%configure --with-octave=/usr/bin/octave
 make %{?_smp_mflags}
 
 # Test suite is currently broken
@@ -115,6 +121,11 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Mon Nov 14 2011 Adam Tkac <atkac redhat com> 2.0.4-3
+- backport r12814 from trunk (#753321)
+- use scm_to_utf8_string instead of SCM_STRING_CHARS in guile bindings (#752054)
+- improve Octave compatibility (#679948)
+
 * Mon Aug 1 2011 Nick Bebout <nb@fedoraproject.org> 2.0.4-2
 - rebuild to fix 2.0.3 being tagged in over 2.0.4-1
 
