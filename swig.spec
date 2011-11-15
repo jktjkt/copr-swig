@@ -48,7 +48,8 @@ This package contains documentation for SWIG and useful examples
 %patch1 -p1 -b .pylib
 %patch4 -p1 -b .rh706140
 %patch5 -p0 -b .rh753321
-%patch6 -p1 -b .rh752054
+# Apply patch 6 when guile2 gets into distro
+#%patch6 -p1 -b .rh752054
 %patch7 -p0 -b .rh679948
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
@@ -121,6 +122,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue Nov 15 2011 Adam Tkac <atkac redhat com> 2.0.4-4
+- don't apply patch for #752054 till guile2 gets into distro
+
 * Mon Nov 14 2011 Adam Tkac <atkac redhat com> 2.0.4-3
 - backport r12814 from trunk (#753321)
 - use scm_to_utf8_string instead of SCM_STRING_CHARS in guile bindings (#752054)
