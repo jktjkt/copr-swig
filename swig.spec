@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.4
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -14,6 +14,7 @@ Patch4: swig203-rh706140.patch
 Patch5: swig204-rh753321.patch
 Patch6: swig204-rh752054.patch
 Patch7: swig204-rh679948.patch
+Patch8: swig204-rh770696.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -51,6 +52,7 @@ This package contains documentation for SWIG and useful examples
 # Apply patch 6 when guile2 gets into distro
 #%patch6 -p1 -b .rh752054
 %patch7 -p0 -b .rh679948
+%patch8 -p1 -b .rh770696
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -122,6 +124,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Jan 05 2012 Adam Tkac <atkac redhat com> 2.0.4-5
+- fix for PHP 5.4 bindings (#770696)
+
 * Tue Nov 15 2011 Adam Tkac <atkac redhat com> 2.0.4-4
 - don't apply patch for #752054 till guile2 gets into distro
 
