@@ -4,7 +4,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.4
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -124,6 +124,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 2.0.4-6
+- Rebuild against PCRE 8.30
+
 * Thu Jan 05 2012 Adam Tkac <atkac redhat com> 2.0.4-5
 - fix for PHP 5.4 bindings (#770696)
 
