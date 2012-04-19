@@ -1,10 +1,16 @@
 %{!?tcl:%define tcl 1}
 %{!?guile:%define guile 1}
 
+%if 0%{?rhel}
+%{!?octave:%define octave 0}
+%else
+%{!?octave:%define octave 1}
+%endif
+
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.4
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -24,7 +30,10 @@ BuildRequires: tcl-devel
 %if %{guile}
 BuildRequires: guile-devel
 %endif
-BuildRequires: autoconf, automake, gawk, dos2unix, octave-devel
+BuildRequires: autoconf, automake, gawk, dos2unix
+%if %{octave}
+BuildRequires: octave-devel
+%endif
 
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
@@ -81,7 +90,11 @@ done
 
 %build
 ./autogen.sh
-%configure --with-octave=/usr/bin/octave
+%configure \
+%if %{octave}
+  --with-octave=/usr/bin/octave \
+%endif
+;
 make %{?_smp_mflags}
 
 # Test suite is currently broken
@@ -124,6 +137,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Apr 19 2012 Adam Tkac <atkac redhat com> - 2.0.4-7
+- drop Octave support on RHEL
+
 * Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 2.0.4-6
 - Rebuild against PCRE 8.30
 
