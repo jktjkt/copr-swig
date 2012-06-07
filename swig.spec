@@ -9,13 +9,12 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
-Version: 2.0.6
+Version: 2.0.7
 Release: 1%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
-Patch1: swig-1.3.23-pylib.patch
 Patch4: swig203-rh706140.patch
 Patch6: swig204-rh752054.patch
 
@@ -52,7 +51,6 @@ This package contains documentation for SWIG and useful examples
 
 %prep
 %setup -q -n swig-%{version}
-%patch1 -p1 -b .pylib
 %patch4 -p1 -b .rh706140
 # Apply patch 6 when guile2 gets into distro
 #%patch6 -p1 -b .rh752054
@@ -131,6 +129,10 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Jun 07 2012 Adam Tkac <atkac redhat com> 2.0.7-1
+- update to 2.0.7
+- swig-1.3.23-pylib.patch is no longer needed
+
 * Thu May 10 2012 Adam Tkac <atkac redhat com> 2.0.6-1
 - update to 2.0.6
 
