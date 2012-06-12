@@ -10,13 +10,14 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 Patch4: swig203-rh706140.patch
 Patch6: swig204-rh752054.patch
+Patch7: swig207-rh830660.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -54,6 +55,8 @@ This package contains documentation for SWIG and useful examples
 %patch4 -p1 -b .rh706140
 # Apply patch 6 when guile2 gets into distro
 #%patch6 -p1 -b .rh752054
+
+%patch7 -p1 -b .rh830660
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -129,6 +132,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue Jun 12 2012 Adam Tkac <atkac redhat com> 2.0.7-2
+- fix generating of python3 wrappers (#830660)
+
 * Thu Jun 07 2012 Adam Tkac <atkac redhat com> 2.0.7-1
 - update to 2.0.7
 - swig-1.3.23-pylib.patch is no longer needed
