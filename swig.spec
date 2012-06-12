@@ -18,6 +18,7 @@ Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-
 Patch4: swig203-rh706140.patch
 Patch6: swig204-rh752054.patch
 Patch7: swig207-rh830660.patch
+Patch8: swig207-r13128.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -57,6 +58,7 @@ This package contains documentation for SWIG and useful examples
 #%patch6 -p1 -b .rh752054
 
 %patch7 -p1 -b .rh830660
+%patch8 -p0 -b .r13128
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -134,6 +136,7 @@ rm -rf %{buildroot}
 %changelog
 * Tue Jun 12 2012 Adam Tkac <atkac redhat com> 2.0.7-2
 - fix generating of python3 wrappers (#830660)
+- don't crash when attepmting to warn about wrong descructor (#830249)
 
 * Thu Jun 07 2012 Adam Tkac <atkac redhat com> 2.0.7-1
 - update to 2.0.7
