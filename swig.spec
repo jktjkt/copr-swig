@@ -10,7 +10,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -19,6 +19,7 @@ Patch4: swig203-rh706140.patch
 Patch6: swig204-rh752054.patch
 Patch7: swig207-rh830660.patch
 Patch8: swig207-r13128.patch
+Patch9: swig207-setools.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -59,6 +60,7 @@ This package contains documentation for SWIG and useful examples
 
 %patch7 -p1 -b .rh830660
 %patch8 -p0 -b .r13128
+%patch9 -p1 -b .setools
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -134,6 +136,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Wed Jun 27 2012 Adam Tkac <atkac redhat com> 2.0.7-3
+- fix building of setools package
+
 * Tue Jun 12 2012 Adam Tkac <atkac redhat com> 2.0.7-2
 - fix generating of python3 wrappers (#830660)
 - don't crash when attepmting to warn about wrong descructor (#830249)
