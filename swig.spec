@@ -10,7 +10,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
@@ -20,6 +20,7 @@ Patch6: swig204-rh752054.patch
 Patch7: swig207-rh830660.patch
 Patch8: swig207-r13128.patch
 Patch9: swig207-setools.patch
+Patch10:swig-rh841245.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -61,6 +62,7 @@ This package contains documentation for SWIG and useful examples
 %patch7 -p1 -b .rh830660
 %patch8 -p0 -b .r13128
 %patch9 -p1 -b .setools
+%patch10 -p1 -b .rh841245
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -136,6 +138,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Jul 19 2012 Adam Tkac <atkac redhat com> 2.0.7-4
+- don't clean "bool" definition in PERL 5 environment (#841245)
+
 * Wed Jun 27 2012 Adam Tkac <atkac redhat com> 2.0.7-3
 - fix building of setools package
 
