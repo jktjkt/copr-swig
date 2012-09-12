@@ -9,18 +9,15 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
-Version: 2.0.7
-Release: 4%{?dist}
+Version: 2.0.8
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 Patch4: swig203-rh706140.patch
 Patch6: swig204-rh752054.patch
-Patch7: swig207-rh830660.patch
-Patch8: swig207-r13128.patch
 Patch9: swig207-setools.patch
-Patch10:swig-rh841245.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
@@ -59,10 +56,7 @@ This package contains documentation for SWIG and useful examples
 # Apply patch 6 when guile2 gets into distro
 #%patch6 -p1 -b .rh752054
 
-%patch7 -p1 -b .rh830660
-%patch8 -p0 -b .r13128
 %patch9 -p1 -b .setools
-%patch10 -p1 -b .rh841245
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
@@ -138,6 +132,12 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Wed Sep 12 2012 Adam Tkac <atkac redhat com> 2.0.8-1
+- update to 2.0.8 (#851364)
+- swig207-rh830660.patch merged
+- swig207-r13128.patch merged
+- swig-rh841245.patch merged
+
 * Thu Jul 19 2012 Adam Tkac <atkac redhat com> 2.0.7-4
 - don't clean "bool" definition in PERL 5 environment (#841245)
 
