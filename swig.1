@@ -1,0 +1,350 @@
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.\" Manpage for swig.
+.TH SWIG 1 "2013-05-24"
+.SH NAME
+swig \- Simplified Wrapper and Interface Generator
+.SH SYNOPSIS
+.B swig
+.RI [ options ] " file"
+
+.SH DESCRIPTION
+The swig command is used to create wrapper code to connect C and C++ code
+to scripting languages like Perl, Python, Tcl etc. from the definition of
+the interface.
+For detailed information on writing those interface definitions please
+refer to /usr/share/doc/swig-doc-2.0.9/Doc/Manual/index.html from the
+swig-doc package.
+This manpage concentrates on explaining the invocation of the swig command.
+
+.SH OPTIONS
+.SS Target Language Options:
+.TP
+.B \-allegrocl
+Generate ALLEGROCL wrappers
+.TP
+.B \-chicken
+Generate CHICKEN wrappers
+.TP
+.B \-clisp
+Generate CLISP wrappers
+.TP
+.B \-cffi
+Generate CFFI wrappers
+.TP
+.B \-csharp
+Generate C# wrappers
+.TP
+.B \-d
+Generate D wrappers
+.TP
+.B \-go
+Generate Go wrappers
+.TP
+.B \-guile
+Generate Guile wrappers
+.TP
+.B \-java
+Generate Java wrappers
+.TP
+.B \-lua
+Generate Lua wrappers
+.TP
+.B \-modula3
+Generate Modula 3 wrappers
+.TP
+.B \-mzscheme
+Generate Mzscheme wrappers
+.TP
+.B \-ocaml
+Generate Ocaml wrappers
+.TP
+.B \-octave
+Generate Octave wrappers
+.TP
+.B \-perl
+Generate Perl wrappers
+.TP
+.B \-php
+Generate PHP wrappers
+.TP
+.B \-pike
+Generate Pike wrappers
+.TP
+.B \-python
+Generate Python wrappers
+.TP
+.B \-r
+Generate R (aka GNU S) wrappers
+.TP
+.B \-ruby
+Generate Ruby wrappers
+.TP
+.B \-sexp
+Generate Lisp S-Expressions wrappers
+.TP
+.B \-tcl
+Generate Tcl wrappers
+.TP
+.B \-uffi
+Generate Common Lisp / UFFI wrappers
+.TP
+.B \-xml
+Generate XML wrappers
+i
+
+.SS General Options:
+.TP
+.B \-addextern
+Add extra extern declarations
+.TP
+.B \-c++
+Enable C++ processing
+.TP
+.BI "\-co " file
+Check \fIfile\fR out of the SWIG library
+.TP
+.B \-copyctor
+Automatically generate copy constructors wherever possible
+.TP
+.B \-cpperraswarn
+Treat the preprocessor #error statement as #warning (default)
+.TP
+.B \-copyright
+Display copyright notices
+.TP
+.B \-debug-classes
+Display information about the classes found in the interface
+.TP
+.BI "\-debug-module " n
+Display module parse tree at stages 1-4, \fIn\fR is a csv list of stages
+.TP
+.B \-debug-symtabs
+Display symbol tables information
+.TP
+.B \-debug-symbols
+Display target language symbols in the symbol tables
+.TP
+.B \-debug-csymbols
+Display C symbols in the symbol tables
+.TP
+.B \-debug-lsymbols
+Display target language layer symbols
+.TP
+.B \-debug-tags
+Display information about the tags found in the interface
+.TP
+.B \-debug-template
+Display information for debugging templates
+.TP
+.BI "\-debug-top " n
+Display entire parse tree at stages 1-4, \fIn\fR is a csv list of stages
+.TP
+.B \-debug-typedef
+Display information about the types and typedefs in the interface
+.TP
+.B \-debug-typemap
+Display typemap debugging information
+.TP
+.B \-debug-tmsearch
+Display typemap search debugging information
+.TP
+.B \-debug-tmused
+Display typemaps used debugging information
+.TP
+.B \-directors
+Turn on director mode for all the classes, mainly for testing
+.TP
+.B \-dirprot
+Turn on wrapping of protected members for director classes (default)
+.TP
+.BI \-D symbol
+Define a symbol \fIsymbol\fR (for conditional compilation)
+.TP
+.B \-E
+Preprocess only, does not generate wrapper code
+.TP
+.B \-external-runtime [file]
+Export the SWIG runtime stack
+.TP
+.BI "\-fakeversion " v
+Make SWIG fake the program version number to \fIv\fR
+.TP
+.B \-fcompact
+Compile in compact mode
+.TP
+.BI "\-features " list
+Set global features, where \fIlist\fR is a comma separated list of
+features, eg -features directors,autodoc=1
+If no explicit value is given to the feature, a default of 1 is used
+.TP
+.B \-fastdispatch
+Enable fast dispatch mode to produce faster overload dispatcher code
+.TP
+.B \-Fmicrosoft
+Display error/warning messages in Microsoft format
+.TP
+.B \-Fstandard
+Display error/warning messages in commonly used format
+.TP
+.B \-fvirtual
+Compile in virtual elimination mode
+.TP
+.B \-help
+This output
+.TP
+.B \-I-
+Don't search the current directory
+.TP
+.BI \-I dir
+Look for SWIG files in directory \fIdir\fR
+.TP
+.B \-ignoremissing
+Ignore missing include files
+.TP
+.B \-importall
+Follow all #include statements as imports
+.TP
+.B \-includeall
+Follow all #include statements
+.TP
+.BI \-l ifile
+Include SWIG library file \fIifile\fR
+.TP
+.B \-macroerrors
+Report errors inside macros
+.TP
+.B \-makedefault
+Create default constructors/destructors (the default)
+.TP
+.B \-M
+List all dependencies
+.TP
+.B \-MD
+Is equivalent to \(cq\&-M -MF \fIfile\fR\(cq\&, except \(cq\&-E\(cq\& is not implied
+.TP
+.BI "\-MF " file
+Generate dependencies into \fIfile\fR and continue generating wrappers
+.TP
+.B \-MM
+List dependencies, but omit files in SWIG library
+.TP
+.B \-MMD
+Like \(cq\&-MD\(cq\&, but omit files in SWIG library
+.TP
+.BI "\-module " name
+Set module name to \fIname\fR
+.TP
+.BI "\-MT " target
+Set the target of the rule emitted by dependency generation
+.TP
+.B \-nocontract
+Turn off contract checking
+.TP
+.B \-nocpperraswarn
+Do not treat the preprocessor #error statement as #warning
+.TP
+.B \-nodefault
+Do not generate default constructors nor default destructors
+.TP
+.B \-nodefaultctor
+Do not generate implicit default constructors
+.TP
+.B \-nodefaultdtor
+Do not generate implicit default destructors
+.TP
+.B \-nodirprot
+Do not wrap director protected members
+.TP
+.B \-noexcept
+Do not wrap exception specifiers
+.TP
+.B \-nofastdispatch
+Disable fast dispatch mode (default)
+.TP
+.B \-nopreprocess
+Skip the preprocessor step
+.TP
+.B \-notemplatereduce
+Disable reduction of the typedefs in templates
+.TP
+.B \-O
+Enable the optimization options:
+-fastdispatch -fvirtual
+.TP
+.BI "\-o " outfile
+Set name of the output file to \fIoutfile\fR
+.TP
+.B "\-oh " headfile
+Set name of the output header file to \fIheadfile\fR
+.TP
+.B \-outcurrentdir
+Set default output dir to current dir instead of input file's path
+.TP
+.BI "\-outdir " dir
+Set language specific files output directory to \fIdir\fR
+.TP
+.B \-pcreversion
+Display PCRE version information
+.TP
+.B \-small
+Compile in virtual elimination & compact mode
+.TP
+.B \-swiglib
+Report location of SWIG library and exit
+.TP
+.B \-templatereduce
+Reduce all the typedefs in templates
+.TP
+.B \-v
+Run in verbose mode
+.TP
+.B \-version
+Display SWIG version number
+.TP
+.B \-Wall
+Remove all warning suppression, also implies -Wextra
+.TP
+.B \-Wallkw
+Enable keyword warnings for all the supported languages
+.TP
+.B \-Werror
+Treat warnings as errors
+.TP
+.B \-Wextra
+Adds the following additional warnings: 202,309,403,512,321,322
+.TP
+.BI \-w list
+Suppress/add warning messages, eg -w401,+321
+see Warnings.html
+.TP
+.B "\-xmlout " file
+Write XML version of the parse tree to \fIfile\fR after normal processing
+
+.SS Tcl 8 Options (available with -tcl)
+.TP
+.B \-itcl
+Enable ITcl support
+.TP
+.B \-nosafe
+Leave out SafeInit module function.
+.TP
+.BI "\-prefix " name
+Set a prefix \fIname\fR to be prepended to all names
+.TP
+.B \-namespace
+Build module into a Tcl 8 namespace
+.TP
+.B \-pkgversion
+Set package version
+
+.PP
+Note: 'swig -\fIlang\fR -help' displays options for a specific target language.
+
+.SH AUTHOR
+SWIG was originally created by David Beazley. For up-to-date information
+about authors and contributors please check http://www.swig.org/guilty.html.
+This manual page was written by Torsten Landschoff <torsten@debian.org> and
+updated by Jitka Plesnikova <jplesnik@redhat.com> (but may be used by others).
+

@@ -10,11 +10,12 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name: swig
 Version: 2.0.9
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+ and BSD
 Group: Development/Tools
 URL: http://swig.sourceforge.net/
-Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
+Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
+Source1: swig.1
 Patch4: swig203-rh706140.patch
 Patch6: swig204-rh752054.patch
 Patch9: swig207-setools.patch
@@ -116,6 +117,11 @@ popd
 
 make DESTDIR=%{buildroot} install
 
+# Add man page for swig
+mkdir -p %{buildroot}%{_mandir}/man1/
+install -p -m 0644 %{SOURCE1} %{buildroot}%{_mandir}/man1/
+gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
+
 %clean
 rm -rf %{buildroot}
 
@@ -124,6 +130,7 @@ rm -rf %{buildroot}
 %{_bindir}/*
 %{_datadir}/swig
 %{_mandir}/man1/ccache-swig.1*
+%{_mandir}/man1/swig.1*
 %doc ANNOUNCE CHANGES CHANGES.current INSTALL LICENSE LICENSE-GPL
 %doc LICENSE-UNIVERSITIES COPYRIGHT README TODO
 
@@ -132,6 +139,9 @@ rm -rf %{buildroot}
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri May 24 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.9-3
+- Add man page for swig (BZ#948407)
+
 * Fri Feb 15 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.9-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
