@@ -8,19 +8,18 @@
 %endif
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
-Name: swig
-Version: 2.0.9
-Release: 3%{?dist}
+Name:    swig
+Version: 2.0.10
+Release: 1%{?dist}
 License: GPLv3+ and BSD
-Group: Development/Tools
-URL: http://swig.sourceforge.net/
+Group:   Development/Tools
+URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 Source1: swig.1
-Patch4: swig203-rh706140.patch
-Patch6: swig204-rh752054.patch
-Patch9: swig207-setools.patch
+Patch1:  swig207-setools.patch
+# Fix the failure on arch x390 during testing
+Patch2:  swig-2.0.10-Fix-x390-build.patch
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: perl, python-devel, pcre-devel
 %if %{tcl}
 BuildRequires: tcl-devel
@@ -32,20 +31,24 @@ BuildRequires: autoconf, automake, gawk, dos2unix
 %if %{octave}
 BuildRequires: octave-devel
 %endif
+# Tests
+BuildRequires: perl-devel
+BuildRequires: perl(Test::More)
+BuildRequires: boost-devel
 
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
 development tool for connecting C, C++ and Objective C programs with a
 variety of high-level programming languages.  SWIG is primarily used
 with Perl, Python and Tcl/TK, but it has also been extended to Java,
-Eiffel and Guile.  SWIG is normally used to create high-level
+Eiffel and Guile. SWIG is normally used to create high-level
 interpreted programming environments, systems integration, and as a
 tool for building user interfaces
 
 %package doc
-Summary: Documentation files for SWIG
-License: BSD
-Group: Development/Tools
+Summary:   Documentation files for SWIG
+License:   BSD
+Group:     Development/Tools
 BuildArch: noarch
 
 %description doc
@@ -53,51 +56,42 @@ This package contains documentation for SWIG and useful examples
 
 %prep
 %setup -q -n swig-%{version}
-%patch4 -p1 -b .rh706140
-# Apply patch 6 when guile2 gets into distro
-#%patch6 -p1 -b .rh752054
 
-%patch9 -p1 -b .setools
+%patch1 -p1 -b .setools
+%patch2 -p1 -b .x390
 
 # as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
 # (specific req/prov filtering). Before you remove this hack make sure you don't
 # reintroduce https://bugzilla.redhat.com/show_bug.cgi?id=489421
-cat << \EOF > %{name}-prov
-#!/bin/sh
-%{__perl_provides} `perl -p -e 's|\S+%{_docdir}/%{name}-doc-%{version}\S+||'`
-EOF
-
-%define __perl_provides %{_builddir}/%{name}-%{version}/%{name}-prov
-chmod +x %{__perl_provides}
-
-cat << \EOF > %{name}-req
-#!/bin/sh
-%{__perl_requires} `perl -p -e 's|\S+%{_docdir}/%{name}-doc-%{version}\S+||'`
-EOF
-
-%define __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
-chmod +x %{__perl_requires}
+%global __provides_exclude_from %{_docdir}/%{name}-doc-%{version}
+%global __requires_exclude_from %{_docdir}/%{name}-doc-%{version}
 
 for all in CHANGES README; do
-	iconv -f ISO88591 -t UTF8 < $all > $all.new
-	touch -r $all $all.new
-	mv -f $all.new $all
+    iconv -f ISO88591 -t UTF8 < $all > $all.new
+    touch -r $all $all.new
+    mv -f $all.new $all
 done
 
 %build
 ./autogen.sh
+
+# Disable maximum compile warnings when octave is supported, because Octave
+# code produces lots of the warnings demanded by strict ISO C and ISO C++. 
+# It causes that log had more then 600M.
 %configure \
 %if %{octave}
   --with-octave=/usr/bin/octave \
+  --without-maximum-compile-warnings \
 %endif
 ;
 make %{?_smp_mflags}
 
-# Test suite is currently broken
-#make check
+# Test suite
+make check
 
 %install
-rm -rf %{buildroot}
+# Remove all arch dependent files in Examples/ created during tests
+make clean-examples
 
 pushd Examples/
 # Remove all arch dependent files in Examples/
@@ -110,8 +104,8 @@ find -type f -name '*.dsw' | xargs rm -f --
 
 # Convert files to UNIX format
 for all in `find -type f`; do
-	dos2unix -k $all
-	chmod -x $all
+    dos2unix -k $all
+    chmod -x $all
 done
 popd
 
@@ -122,11 +116,7 @@ mkdir -p %{buildroot}%{_mandir}/man1/
 install -p -m 0644 %{SOURCE1} %{buildroot}%{_mandir}/man1/
 gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
 
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root,-)
 %{_bindir}/*
 %{_datadir}/swig
 %{_mandir}/man1/ccache-swig.1*
@@ -135,10 +125,15 @@ rm -rf %{buildroot}
 %doc LICENSE-UNIVERSITIES COPYRIGHT README TODO
 
 %files doc
-%defattr(-,root,root,-)
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri May 31 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.10-1
+- Update to 2.0.10
+- swig203-rh706140.patch merged
+- swig204-rh752054.patch merged
+- Create swig-2.0.10-Fix-x390-build.patch
+
 * Fri May 24 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.9-3
 - Add man page for swig (BZ#948407)
 
