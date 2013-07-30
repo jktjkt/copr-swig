@@ -10,7 +10,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 2.0.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 Group:   Development/Tools
 URL:     http://swig.sourceforge.net/
@@ -128,6 +128,9 @@ gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue Jul 30 2013 Petr Machata <pmachata@redhat.com> - 2.0.10-2
+- Rebuild for boost 1.54.0
+
 * Fri May 31 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.10-1
 - Update to 2.0.10
 - swig203-rh706140.patch merged
