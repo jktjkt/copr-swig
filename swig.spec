@@ -10,7 +10,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 2.0.10
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 Group:   Development/Tools
 URL:     http://swig.sourceforge.net/
@@ -59,12 +59,6 @@ This package contains documentation for SWIG and useful examples
 
 %patch1 -p1 -b .setools
 %patch2 -p1 -b .x390
-
-# as written on https://fedoraproject.org/wiki/Packaging_talk:Perl, section 2
-# (specific req/prov filtering). Before you remove this hack make sure you don't
-# reintroduce https://bugzilla.redhat.com/show_bug.cgi?id=489421
-%global __provides_exclude_from %{_docdir}/%{name}-doc-%{version}
-%global __requires_exclude_from %{_docdir}/%{name}-doc-%{version}
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -128,6 +122,11 @@ gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Wed Aug 21 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.10-4
+- Fixed BZ#994120
+  - Remove the req/prov filtering from version docdir (BZ#489421), because
+    it is not needed
+
 * Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.10-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
