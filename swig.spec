@@ -9,8 +9,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
-Version: 2.0.10
-Release: 4%{?dist}
+Version: 2.0.11
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 Group:   Development/Tools
 URL:     http://swig.sourceforge.net/
@@ -122,6 +122,9 @@ gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Mon Sep 16 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.11-1
+- Update to 2.0.11
+
 * Wed Aug 21 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.10-4
 - Fixed BZ#994120
   - Remove the req/prov filtering from version docdir (BZ#489421), because
