@@ -1,3 +1,6 @@
+# We can skip tests
+%bcond_without testsuite
+
 %{!?tcl:%define tcl 1}
 %{!?guile:%define guile 1}
 
@@ -10,7 +13,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 2.0.11
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 Group:   Development/Tools
 URL:     http://swig.sourceforge.net/
@@ -80,8 +83,10 @@ done
 ;
 make %{?_smp_mflags}
 
+%if %{with testsuite}
 # Test suite
 make check
+%endif
 
 %install
 # Remove all arch dependent files in Examples/ created during tests
@@ -122,6 +127,9 @@ gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Wed Oct 09 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.11-2
+- Use bconds for enabling testsuite
+
 * Mon Sep 16 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.11-1
 - Update to 2.0.11
 
