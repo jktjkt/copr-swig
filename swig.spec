@@ -12,8 +12,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
-Version: 2.0.11
-Release: 2%{?dist}
+Version: 2.0.12
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 Group:   Development/Tools
 URL:     http://swig.sourceforge.net/
@@ -127,6 +127,9 @@ gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri Feb 28 2014 Orion Poplawski <orion@cora.nwra.com> - 2.0.12-1
+- Update to 2.0.12
+
 * Wed Oct 09 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.11-2
 - Use bconds for enabling testsuite
 
