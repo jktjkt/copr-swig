@@ -19,6 +19,9 @@ Group:   Development/Tools
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 Source1: swig.1
+# Upstream patch to fix guile locale
+# https://github.com/swig/swig/pull/139/files
+Patch0:  swig-guile.patch
 Patch1:  swig207-setools.patch
 # Fix the failure on arch x390 during testing
 Patch2:  swig-2.0.10-Fix-x390-build.patch
@@ -60,6 +63,7 @@ This package contains documentation for SWIG and useful examples
 %prep
 %setup -q -n swig-%{version}
 
+%patch0 -p1 -b .guile
 %patch1 -p1 -b .setools
 %patch2 -p1 -b .x390
 
@@ -129,6 +133,7 @@ gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
 %changelog
 * Fri Feb 28 2014 Orion Poplawski <orion@cora.nwra.com> - 2.0.12-1
 - Update to 2.0.12
+- A patch to fix guile locale
 
 * Wed Oct 09 2013 Jitka Plesnikova <jplesnik@redhat.com> - 2.0.11-2
 - Use bconds for enabling testsuite
