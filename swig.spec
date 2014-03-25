@@ -1,46 +1,69 @@
 # We can skip tests
 %bcond_without testsuite
 
-%{!?tcl:%define tcl 1}
-%{!?guile:%define guile 1}
+%{!?tcl:%global tcl 1}
+%{!?guile:%global guile 1}
+%{!?lualang:%global lualang 1}
+%{!?rubylang:%global rubylang 1}
+%{!?javalang:%global javalang 1}
+
+%ifarch %{arm}
+%{!?golang:%global golang 0}
+%else
+%{!?golang:%global golang 1}
+%endif
 
 %if 0%{?rhel}
-%{!?octave:%define octave 0}
+%{!?octave:%global octave 0}
+%{!?Rlang:%global Rlang 0}
 %else
-%{!?octave:%define octave 1}
+%{!?octave:%global octave 1}
+%{!?Rlang:%global Rlang 1}
 %endif
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
-Version: 2.0.12
+Version: 3.0.0
 Release: 1%{?dist}
 License: GPLv3+ and BSD
-Group:   Development/Tools
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
-Source1: swig.1
-# Upstream patch to fix guile locale
-# https://github.com/swig/swig/pull/139/files
-Patch0:  swig-guile.patch
+# Define the part of man page sections
+Source1: description.h2m
 Patch1:  swig207-setools.patch
 # Fix the failure on arch x390 during testing
 Patch2:  swig-2.0.10-Fix-x390-build.patch
 
-BuildRequires: perl, python-devel, pcre-devel
+BuildRequires: perl, python2-devel, pcre-devel
+BuildRequires: autoconf, automake, gawk, dos2unix
+BuildRequires: help2man
+BuildRequires: perl-devel
+BuildRequires: perl(Test::More)
+BuildRequires: boost-devel
 %if %{tcl}
 BuildRequires: tcl-devel
 %endif
 %if %{guile}
 BuildRequires: guile-devel
 %endif
-BuildRequires: autoconf, automake, gawk, dos2unix
 %if %{octave}
 BuildRequires: octave-devel
 %endif
-# Tests
-BuildRequires: perl-devel
-BuildRequires: perl(Test::More)
-BuildRequires: boost-devel
+%if %{golang}
+BuildRequires: golang
+%endif
+%if %{lualang}
+BuildRequires: lua-devel
+%endif
+%if %{rubylang}
+BuildRequires: ruby-devel
+%endif
+%if %{Rlang}
+BuildRequires: R-devel
+%endif
+%if %{javalang}
+BuildRequires: java, java-devel
+%endif
 
 %description
 Simplified Wrapper and Interface Generator (SWIG) is a software
@@ -63,7 +86,6 @@ This package contains documentation for SWIG and useful examples
 %prep
 %setup -q -n swig-%{version}
 
-%patch0 -p1 -b .guile
 %patch1 -p1 -b .setools
 %patch2 -p1 -b .x390
 
@@ -77,7 +99,7 @@ done
 ./autogen.sh
 
 # Disable maximum compile warnings when octave is supported, because Octave
-# code produces lots of the warnings demanded by strict ISO C and ISO C++. 
+# code produces lots of the warnings demanded by strict ISO C and ISO C++.
 # It causes that log had more then 600M.
 %configure \
 %if %{octave}
@@ -98,12 +120,12 @@ make clean-examples
 
 pushd Examples/
 # Remove all arch dependent files in Examples/
-find -type f -name 'Makefile.in' | xargs rm -f --
+find -type f -name 'Makefile.in' -delete -print
 
 # We don't want to ship files below.
 rm -rf test-suite
-find -type f -name '*.dsp' | xargs rm -f --
-find -type f -name '*.dsw' | xargs rm -f --
+find -type f -name '*.dsp' -delete -print
+find -type f -name '*.dsw' -delete -print
 
 # Convert files to UNIX format
 for all in `find -type f`; do
@@ -114,23 +136,47 @@ popd
 
 make DESTDIR=%{buildroot} install
 
-# Add man page for swig
+# Use help output for generating of man page
+echo "Options:" >help_output
+%{buildroot}%{_bindir}/swig --help >>help_output
+
+# Update the output to be correctly formatted be help2man
+sed -i -e 's/^\(\s\+-[^-]\+\)- \(.*\)$/\1 \2/' help_output
+sed -i -e 's/^\(\s\+-\w\+-[^-]*\)- \(.*\)$/\1 \2/' help_output
+
+# Generate a helper script that will be used by help2man
+cat >h2m_helper <<'EOF'
+#!/bin/bash
+[ "$1" == "--version" ] && echo "" || cat help_output
+EOF
+chmod a+x h2m_helper
+
+# Generate man page
+help2man -N --section 1 ./h2m_helper --include %{SOURCE1} -o %{name}.1
+
+# Add man page for swig to repository
 mkdir -p %{buildroot}%{_mandir}/man1/
-install -p -m 0644 %{SOURCE1} %{buildroot}%{_mandir}/man1/
-gzip %{buildroot}%{_mandir}/man1/$(basename %{SOURCE1})
+install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 
 %files
 %{_bindir}/*
 %{_datadir}/swig
 %{_mandir}/man1/ccache-swig.1*
 %{_mandir}/man1/swig.1*
-%doc ANNOUNCE CHANGES CHANGES.current INSTALL LICENSE LICENSE-GPL
+%doc ANNOUNCE CHANGES CHANGES.current LICENSE LICENSE-GPL
 %doc LICENSE-UNIVERSITIES COPYRIGHT README TODO
 
 %files doc
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Mar 20 2014 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.0-1
+- Update to 3.0.0
+- Update BRs to run tests for Java, Ruby, Lua, R, Go
+- Replace %%define by %%global (BZ#1063589)
+- Remove Group tag (BZ#1063589)
+- Generate man page from help to have the correct list of options
+
 * Fri Feb 28 2014 Orion Poplawski <orion@cora.nwra.com> - 2.0.12-1
 - Update to 2.0.12
 - A patch to fix guile locale
