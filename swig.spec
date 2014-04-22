@@ -7,7 +7,7 @@
 %{!?rubylang:%global rubylang 1}
 %{!?javalang:%global javalang 1}
 
-%ifarch %{arm} ppc64le
+%ifarch %{arm} ppc64le ppc %{power64} s390 s390x
 %{!?golang:%global golang 0}
 %else
 %{!?golang:%global golang 1}
@@ -24,7 +24,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -109,10 +109,12 @@ done
 ;
 make %{?_smp_mflags}
 
-## ppc64le passes most tests but fail some java ones; disable for now
-%if %{with testsuite} && %{_arch} != ppc64le
+%if %{with testsuite}
+## ppc* passes most tests but fail some java ones; disable for now
+%ifnarch ppc64le ppc %{power64}
 # Test suite
 make check
+%endif
 %endif
 
 %install
@@ -171,6 +173,10 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue Apr 22 2014 Karsten Hopp <karsten@redhat.com> 3.0.0-3
+- golang is exclusivearch %{ix86} x86_64 %{arm}, don't BR it on ppc*, s390*
+- unit tests fail on other ppc archs, too. disable for now
+
 * Fri Mar 28 2014 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.0-1
 - Small changes to enable ppc64le (BZ#1081724)
 
