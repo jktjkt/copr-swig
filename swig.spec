@@ -7,7 +7,7 @@
 %{!?rubylang:%global rubylang 1}
 %{!?javalang:%global javalang 1}
 
-%ifarch %{arm} ppc64le ppc %{power64} s390 s390x
+%ifarch aarch64 %{arm} ppc64le ppc %{power64} s390 s390x
 %{!?golang:%global golang 0}
 %else
 %{!?golang:%global golang 1}
@@ -18,13 +18,18 @@
 %{!?Rlang:%global Rlang 0}
 %else
 %{!?octave:%global octave 1}
+%ifnarch aarch64
 %{!?Rlang:%global Rlang 1}
+%else
+%{!?Rlang:%global Rlang 0}
 %endif
+%endif
+
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -173,6 +178,9 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri Apr 25 2014 Peter Robinson <pbrobinson@fedoraproject.org> 3.0.0-4
+- No golang or R on aarch64 (currently)
+
 * Tue Apr 22 2014 Karsten Hopp <karsten@redhat.com> 3.0.0-3
 - golang is exclusivearch %{ix86} x86_64 %{arm}, don't BR it on ppc*, s390*
 - unit tests fail on other ppc archs, too. disable for now
