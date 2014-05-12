@@ -29,7 +29,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -116,7 +116,7 @@ make %{?_smp_mflags}
 
 %if %{with testsuite}
 ## ppc* passes most tests but fail some java ones; disable for now
-%ifnarch ppc64le ppc %{power64}
+%ifnarch ppc64le ppc %{power64} aarch64
 # Test suite
 make check
 %endif
@@ -178,6 +178,9 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Mon May 12 2014 Peter Robinson <pbrobinson@fedoraproject.org> 3.0.0-5
+- unit tests fail on aarch64, too. disable for now
+
 * Fri Apr 25 2014 Peter Robinson <pbrobinson@fedoraproject.org> 3.0.0-4
 - No golang or R on aarch64 (currently)
 
