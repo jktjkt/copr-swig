@@ -5,31 +5,33 @@
 %{!?guile:%global guile 1}
 %{!?lualang:%global lualang 1}
 %{!?rubylang:%global rubylang 1}
-%{!?javalang:%global javalang 1}
 
 %ifarch aarch64 %{arm} ppc64le ppc %{power64} s390 s390x
 %{!?golang:%global golang 0}
+%{!?Rlang:%global Rlang 0}
+%{!?javalang:%global javalang 0}
+%else
+%if 0%{?rhel}
+%{!?golang:%global golang 0}
+%{!?Rlang:%global Rlang 0}
 %else
 %{!?golang:%global golang 1}
+%{!?Rlang:%global Rlang 1}
+%endif
+%{!?javalang:%global javalang 1}
 %endif
 
 %if 0%{?rhel}
 %{!?octave:%global octave 0}
-%{!?Rlang:%global Rlang 0}
 %else
 %{!?octave:%global octave 1}
-%ifnarch aarch64
-%{!?Rlang:%global Rlang 1}
-%else
-%{!?Rlang:%global Rlang 0}
-%endif
 %endif
 
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
-Version: 3.0.0
-Release: 7%{?dist}
+Version: 3.0.1
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -107,6 +109,16 @@ done
 # code produces lots of the warnings demanded by strict ISO C and ISO C++.
 # It causes that log had more then 600M.
 %configure \
+  --without-ocaml \
+%if ! %{javalang}
+  --without-java \
+%endif
+%if ! %{Rlang}
+  --without-r \
+%endif
+%if ! %{golang}
+  --without-go \
+%endif
 %if %{octave}
   --with-octave=/usr/bin/octave \
   --without-maximum-compile-warnings \
@@ -115,11 +127,8 @@ done
 make %{?_smp_mflags}
 
 %if %{with testsuite}
-## ppc*, s390(x) passes most tests but fail some java ones; disable for now
-%ifnarch ppc64le ppc %{power64} aarch64 s390 s390x
 # Test suite
 make check
-%endif
 %endif
 
 %install
@@ -178,6 +187,10 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu May 29 2014 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.1-1
+- Update to 3.0.1
+- Updated parameters for configure and conditions for BRs
+
 * Fri May 23 2014 Petr Machata <pmachata@redhat.com> - 3.0.0-7
 - Rebuild for boost 1.55.0
 
@@ -194,7 +207,7 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 - golang is exclusivearch %{ix86} x86_64 %{arm}, don't BR it on ppc*, s390*
 - unit tests fail on other ppc archs, too. disable for now
 
-* Fri Mar 28 2014 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.0-1
+* Fri Mar 28 2014 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.0-2
 - Small changes to enable ppc64le (BZ#1081724)
 
 * Thu Mar 20 2014 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.0-1
