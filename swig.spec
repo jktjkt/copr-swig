@@ -191,6 +191,9 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 * Tue Feb 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.5-1
 - Update to 3.0.5
 
+* Tue Jan 27 2015 Petr Machata <pmachata@redhat.com> - 3.0.2-3
+- Rebuild for boost 1.57.0
+
 * Mon Aug 18 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
