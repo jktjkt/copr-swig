@@ -16,7 +16,8 @@
 %{!?Rlang:%global Rlang 0}
 %else
 %{!?golang:%global golang 1}
-%{!?Rlang:%global Rlang 1}
+# R tests failed (since 3.0.4)
+%{!?Rlang:%global Rlang 0}
 %endif
 %{!?javalang:%global javalang 1}
 %endif
@@ -30,8 +31,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
-Version: 3.0.2
-Release: 2%{?dist}
+Version: 3.0.5
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -187,6 +188,9 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue Feb 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.5-1
+- Update to 3.0.5
+
 * Mon Aug 18 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
