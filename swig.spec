@@ -32,7 +32,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -176,9 +176,14 @@ help2man -N --section 1 ./h2m_helper --include %{SOURCE1} -o %{name}.1
 mkdir -p %{buildroot}%{_mandir}/man1/
 install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 
+# Enable ccache-swig by default, if ccache is installed.
+mkdir -p %{buildroot}%{_libdir}/ccache
+ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
+
 %files
 %{_bindir}/*
 %{_datadir}/swig
+%{_libdir}/ccache
 %{_mandir}/man1/ccache-swig.1*
 %{_mandir}/man1/swig.1*
 %doc ANNOUNCE CHANGES CHANGES.current LICENSE LICENSE-GPL
@@ -188,8 +193,11 @@ install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue Feb 10 2015 Björn Esser <bjoern.esser@gmail.com> - 3.0.5-2
+- Enable ccache-swig by default, if ccache is installed (#1176861)
+
 * Tue Feb 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.5-1
-- Update to 3.0.5
+- Update to 3.0.5 (#1178440)
 
 * Tue Jan 27 2015 Petr Machata <pmachata@redhat.com> - 3.0.2-3
 - Rebuild for boost 1.57.0
