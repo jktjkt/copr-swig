@@ -32,7 +32,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -193,6 +193,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Feb 19 2015 Orion Poplawski <orion@cora.nwra.com> - 3.0.5-3
+- Rebuild for gcc 5 C++11 ABI
+
 * Tue Feb 10 2015 Björn Esser <bjoern.esser@gmail.com> - 3.0.5-2
 - Enable ccache-swig by default, if ccache is installed (#1176861)
 
