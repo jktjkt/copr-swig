@@ -32,7 +32,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -41,6 +41,9 @@ Source1: description.h2m
 Patch1:  swig207-setools.patch
 # Fix the failure on arch x390 during testing
 Patch2:  swig-2.0.10-Fix-x390-build.patch
+# Fix segfaults of Python-wrappers when generating code with
+# `-buildin -modern -modernargs`.  Patch is upstreamed, see patch-url.
+Patch3:  https://github.com/swig/swig/pull/372.patch#/swig-3.0.5_fix-python-modern-buildin.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -96,6 +99,7 @@ This package contains documentation for SWIG and useful examples
 
 %patch1 -p1 -b .setools
 %patch2 -p1 -b .x390
+%patch3 -p1 -b .python
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -193,6 +197,10 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri Apr 03 2015 Björn Esser <bjoern.esser@gmail.com> - 3.0.5-4
+- Add Patch3 to fix segfaults of Python-wrappers when generating
+  code with `-buildin -modern -modernargs`-flags
+
 * Thu Feb 19 2015 Orion Poplawski <orion@cora.nwra.com> - 3.0.5-3
 - Rebuild for gcc 5 C++11 ABI
 
