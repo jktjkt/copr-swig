@@ -7,9 +7,9 @@
 
 # Ruby segfaults in some tests on fc23 and only on armv7-arch.
 %ifarch %{arm}
-%if 0%{?fedora} = 23
+%if 0%{?fedora} == 23
 %{!?rubylang:%global rubylang 0}
-%endif # 0%%{?fedora} = 23
+%endif # 0%%{?fedora} == 23
 %endif #arch %%{arm}
 %{!?rubylang:%global rubylang 1}
 
