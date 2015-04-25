@@ -39,7 +39,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.5
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -52,7 +52,7 @@ Patch1:  swig207-setools.patch
 Patch2:  swig-2.0.10-Fix-x390-build.patch
 # Fix segfaults of Python-wrappers when generating code with
 # `-buildin -modern -modernargs`.  Patch is upstreamed, see patch-url.
-Patch3:  https://github.com/swig/swig/pull/372.patch#/swig-3.0.5_fix-python-modern-buildin.patch
+Patch3:  https://github.com/swig/swig/commit/416277b3a56646c2934ca9ee542a3f36d4f9a436.patch#/swig-3.0.5_fix-python-modern-buildin.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -206,6 +206,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Sat Apr 25 2015 Björn Esser <bjoern.esser@gmail.com> - 3.0.5-6
+- Updated Patch3 with a more elaborated approach
+
 * Sat Apr 04 2015 Björn Esser <bjoern.esser@gmail.com> - 3.0.5-5
 - Disable Ruby-testsuite on fc23 when building on armv7.  It currently
   segfaults for unknown reason.
