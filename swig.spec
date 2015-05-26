@@ -6,11 +6,11 @@
 %{!?lualang:%global lualang 1}
 
 # Ruby segfaults in some tests on fc23 and only on armv7-arch.
-%ifarch %{arm}
+%ifarch %{arm} s390
 %if 0%{?fedora} == 23
 %{!?rubylang:%global rubylang 0}
 %endif # 0%%{?fedora} == 23
-%endif #arch %%{arm}
+%endif #arch %%{arm} s390
 %{!?rubylang:%global rubylang 1}
 
 %ifarch aarch64 %{arm} ppc64le ppc %{power64} s390 s390x
@@ -39,7 +39,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.5
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -206,6 +206,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue May 26 2015 Dan Horák <dan[at]danny.cz> - 3.0.5-7
+- skip ruby also on s390 (#1225140)
+
 * Sat Apr 25 2015 Björn Esser <bjoern.esser@gmail.com> - 3.0.5-6
 - Updated Patch3 with a more elaborated approach
 
