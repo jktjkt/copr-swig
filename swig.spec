@@ -39,13 +39,16 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 # Define the part of man page sections
 Source1: description.h2m
 Patch1:  swig207-setools.patch
+# Octave 4.0.0 support
+# https://github.com/swig/swig/pull/460
+Patch2:  swig-octave4.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -100,6 +103,7 @@ This package contains documentation for SWIG and useful examples
 %setup -q -n swig-%{version}
 
 %patch1 -p1 -b .setools
+%patch2 -p1 -b .octave4
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -197,6 +201,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Fri Jul 10 2015 Orion Poplawski <orion@cora.nwra.com> - 3.0.6-2
+- Add patch for octave 4.0.0 support
+
 * Mon Jul 06 2015 Björn Esser <bjoern.esser@gmail.com> - 3.0.6-1
 - Update to 3.0.6 (#1240107)
 - Dropped Patch2 and Patch3, changes applied in upstream tarball
