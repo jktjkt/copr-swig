@@ -39,7 +39,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -201,6 +201,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Wed Jul 22 2015 David Tardon <dtardon@redhat.com> - 3.0.6-3
+- rebuild for Boost 1.58
+
 * Fri Jul 10 2015 Orion Poplawski <orion@cora.nwra.com> - 3.0.6-2
 - Add patch for octave 4.0.0 support
 
