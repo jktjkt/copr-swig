@@ -7,9 +7,9 @@
 
 # Ruby segfaults in some tests on fc23 and only on armv7-arch.
 %ifarch %{arm} s390
-%if 0%{?fedora} == 23
+%if 0%{?fedora} >= 23
 %{!?rubylang:%global rubylang 0}
-%endif # 0%%{?fedora} == 23
+%endif # 0%%{?fedora} >= 23
 %endif #arch %%{arm} s390
 %{!?rubylang:%global rubylang 1}
 
@@ -39,7 +39,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -54,7 +54,16 @@ BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
 BuildRequires: help2man
 BuildRequires: perl-devel
+BuildRequires: perl(base)
+BuildRequires: perl(Config)
+BuildRequires: perl(Devel::Peek)
+BuildRequires: perl(ExtUtils::MakeMaker)
+BuildRequires: perl(fields)
+BuildRequires: perl(Math::BigInt)
+BuildRequires: perl(strict)
 BuildRequires: perl(Test::More)
+BuildRequires: perl(vars)
+BuildRequires: perl(warnings)
 BuildRequires: boost-devel
 %if %{tcl}
 BuildRequires: tcl-devel
@@ -201,6 +210,10 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Jul 23 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.6-4
+- Disable Ruby tests on Fedora 23 and higher when building on armv7
+- Update list of Perl dependencies
+
 * Wed Jul 22 2015 David Tardon <dtardon@redhat.com> - 3.0.6-3
 - rebuild for Boost 1.58
 
