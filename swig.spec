@@ -54,7 +54,16 @@ BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
 BuildRequires: help2man
 BuildRequires: perl-devel
+BuildRequires: perl(base)
+BuildRequires: perl(Config)
+BuildRequires: perl(Devel::Peek)
+BuildRequires: perl(ExtUtils::MakeMaker)
+BuildRequires: perl(fields)
+BuildRequires: perl(Math::BigInt)
+BuildRequires: perl(strict)
 BuildRequires: perl(Test::More)
+BuildRequires: perl(vars)
+BuildRequires: perl(warnings)
 BuildRequires: boost-devel
 %if %{tcl}
 BuildRequires: tcl-devel
@@ -203,6 +212,7 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %changelog
 * Thu Jul 23 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.6-4
 - Disable Ruby tests on Fedora 23 and higher when building on armv7
+- Update list of Perl dependencies
 
 * Wed Jul 22 2015 David Tardon <dtardon@redhat.com> - 3.0.6-3
 - rebuild for Boost 1.58
