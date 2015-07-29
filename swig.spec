@@ -39,7 +39,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.6
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -210,6 +210,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Wed Jul 29 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.6-6
+- Rebuilt for https://fedoraproject.org/wiki/Changes/F23Boost159
+
 * Thu Jul 23 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.6-5
 - rebuild for Boost 1.58
 
