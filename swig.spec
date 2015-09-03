@@ -40,7 +40,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.7
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -208,6 +208,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Thu Sep 03 2015 Jonathan Wakely <jwakely@redhat.com> - 3.0.7-5
+- Rebuilt for Boost 1.59
+
 * Tue Sep 01 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.7-4
 - Disable Ruby tests
 
