@@ -6,11 +6,12 @@
 %{!?lualang:%global lualang 1}
 
 # Ruby segfaults in some tests on fc23 and only on armv7-arch.
-%ifarch %{arm} s390
+#%%ifarch %%{arm} s390
+# Disable Ruby tests for all arches due to BZ#1225140
 %if 0%{?fedora} >= 23
 %{!?rubylang:%global rubylang 0}
 %endif # 0%%{?fedora} >= 23
-%endif #arch %%{arm} s390
+#%%endif #arch %%{arm} s390
 %{!?rubylang:%global rubylang 1}
 
 %ifarch aarch64 %{arm} ppc64le ppc %{power64} s390 s390x
@@ -39,7 +40,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -49,6 +50,7 @@ Patch1:  swig207-setools.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
+BuildRequires: gcc-c++
 BuildRequires: help2man
 BuildRequires: perl-devel
 BuildRequires: perl(base)
@@ -206,6 +208,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
 
 %changelog
+* Tue Sep 01 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.7-4
+- Disable Ruby tests
+
 * Thu Aug 27 2015 Jonathan Wakely <jwakely@redhat.com> - 3.0.7-3
 - Rebuilt for Boost 1.59
 
