@@ -5,13 +5,6 @@
 %{!?guile:%global guile 1}
 %{!?lualang:%global lualang 1}
 
-# Ruby segfaults in some tests on fc23 and only on armv7-arch.
-#%%ifarch %%{arm} s390
-# Disable Ruby tests for all arches due to BZ#1225140
-%if 0%{?fedora} >= 23
-%{!?rubylang:%global rubylang 0}
-%endif # 0%%{?fedora} >= 23
-#%%endif #arch %%{arm} s390
 %{!?rubylang:%global rubylang 1}
 
 %ifarch aarch64 %{arm} ppc64le ppc %{power64} s390 s390x
@@ -40,13 +33,18 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.7
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 # Define the part of man page sections
 Source1: description.h2m
 Patch1:  swig207-setools.patch
+
+# Ruby patches will be part of SWIG 3.0.8
+Patch2:  swig307-Fix-Ruby-trackings-code-to-use-C-hash.patch
+Patch3:  swig307-Ruby-trackings-patch-tidy-up.patch
+Patch4:  swig307-Ruby-trackings-support-for-1.8.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -111,6 +109,9 @@ This package contains documentation for SWIG and useful examples
 %setup -q -n swig-%{version}
 
 %patch1 -p1 -b .setools
+%patch2 -p1 -b .rubyhash
+%patch3 -p1 -b .rubytidyup
+%patch4 -p1 -b .ruby18
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -201,13 +202,18 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %{_libdir}/ccache
 %{_mandir}/man1/ccache-swig.1*
 %{_mandir}/man1/swig.1*
-%doc ANNOUNCE CHANGES CHANGES.current LICENSE LICENSE-GPL
-%doc LICENSE-UNIVERSITIES COPYRIGHT README TODO
+%license LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
+%doc ANNOUNCE CHANGES CHANGES.current
+%doc COPYRIGHT README TODO
 
 %files doc
-%doc Doc Examples LICENSE LICENSE-GPL LICENSE-UNIVERSITIES COPYRIGHT
+%license LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
+%doc Doc Examples COPYRIGHT
 
 %changelog
+* Mon Sep 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.7-6
+- Fix Ruby tracking code (BZ#1225140)
+
 * Thu Sep 03 2015 Jonathan Wakely <jwakely@redhat.com> - 3.0.7-5
 - Rebuilt for Boost 1.59
 
