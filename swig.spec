@@ -33,18 +33,17 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.7
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 # Define the part of man page sections
 Source1: description.h2m
-Patch1:  swig207-setools.patch
 
 # Ruby patches will be part of SWIG 3.0.8
-Patch2:  swig307-Fix-Ruby-trackings-code-to-use-C-hash.patch
-Patch3:  swig307-Ruby-trackings-patch-tidy-up.patch
-Patch4:  swig307-Ruby-trackings-support-for-1.8.patch
+Patch1:  swig307-Fix-Ruby-trackings-code-to-use-C-hash.patch
+Patch2:  swig307-Ruby-trackings-patch-tidy-up.patch
+Patch3:  swig307-Ruby-trackings-support-for-1.8.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -108,10 +107,9 @@ This package contains documentation for SWIG and useful examples
 %prep
 %setup -q -n swig-%{version}
 
-%patch1 -p1 -b .setools
-%patch2 -p1 -b .rubyhash
-%patch3 -p1 -b .rubytidyup
-%patch4 -p1 -b .ruby18
+%patch1 -p1 -b .rubyhash
+%patch2 -p1 -b .rubytidyup
+%patch3 -p1 -b .ruby18
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -211,6 +209,10 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Wed Sep 16 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.7-7
+- Remove the old setools patch. The bug was already fixed by upstream
+- Resolves: bz#1180257
+
 * Mon Sep 14 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.7-6
 - Fix Ruby tracking code (BZ#1225140)
 
