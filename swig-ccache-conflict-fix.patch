@@ -1,0 +1,15 @@
+diff --git a/CCache/test.sh b/CCache/test.sh
+index 6e5d267..a0e888d 100755
+--- a/CCache/test.sh
++++ b/CCache/test.sh
+@@ -15,6 +15,10 @@ else
+  SWIG=swig
+ fi
+ 
++# RH fix: Remove ccache from $PATH if it exists
++# as it will influence the unit tests
++PATH="`echo $PATH |awk -v RS=: -v ORS=: '/\/usr\/lib(64|)\/ccache(:|)/ {next} {print}' | sed 's/:*$//'`"
++
+ CCACHE=../ccache-swig
+ TESTDIR=test.$$
+ 

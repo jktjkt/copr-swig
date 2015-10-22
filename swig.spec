@@ -33,7 +33,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.7
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -44,6 +44,7 @@ Source1: description.h2m
 Patch1:  swig307-Fix-Ruby-trackings-code-to-use-C-hash.patch
 Patch2:  swig307-Ruby-trackings-patch-tidy-up.patch
 Patch3:  swig307-Ruby-trackings-support-for-1.8.patch
+Patch4:  swig-ccache-conflict-fix.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -110,6 +111,7 @@ This package contains documentation for SWIG and useful examples
 %patch1 -p1 -b .rubyhash
 %patch2 -p1 -b .rubytidyup
 %patch3 -p1 -b .ruby18
+%patch4 -p1 -b .ccache-conflict
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -209,6 +211,10 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Wed Oct 21 2015 David Sommerseth <davids@redhat.com> - 3.0.7-8
+- Ignore locally installed ccache when running CCache unit tests
+- Resolves: bz#1274031
+
 * Wed Sep 16 2015 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.7-7
 - Remove the old setools patch. The bug was already fixed by upstream
 - Resolves: bz#1180257
