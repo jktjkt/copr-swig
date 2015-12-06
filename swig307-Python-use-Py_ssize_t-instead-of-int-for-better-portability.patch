@@ -1,0 +1,404 @@
+From c5322a9ecb2b9b13ad6300cf1675192a54f952c1 Mon Sep 17 00:00:00 2001
+From: William S Fulton <wsf@fultondesigns.co.uk>
+Date: Fri, 4 Dec 2015 23:32:46 +0000
+Subject: [PATCH] Python use Py_ssize_t instead of int for better portability
+
+---
+ Lib/python/pycontainer.swg          | 25 ++++++++++++-------------
+ Lib/python/pyrun.swg                | 12 +++++-------
+ Lib/python/pystrings.swg            |  6 +++---
+ Lib/python/pywstrings.swg           |  2 +-
+ Lib/python/std_map.i                | 26 +++++++++++---------------
+ Lib/python/std_multimap.i           |  5 ++---
+ Lib/python/std_unordered_map.i      | 26 +++++++++++---------------
+ Lib/python/std_unordered_multimap.i |  5 ++---
+ Source/Modules/python.cxx           |  6 +++---
+ 9 files changed, 50 insertions(+), 63 deletions(-)
+
+diff --git a/Lib/python/pycontainer.swg b/Lib/python/pycontainer.swg
+index ceb3b66..46d0438 100644
+--- a/Lib/python/pycontainer.swg
++++ b/Lib/python/pycontainer.swg
+@@ -415,7 +415,7 @@ namespace swig
+   template <class T>
+   struct SwigPySequence_Ref
+   {
+-    SwigPySequence_Ref(PyObject* seq, int index)
++    SwigPySequence_Ref(PyObject* seq, Py_ssize_t index)
+       : _seq(seq), _index(index)
+     {
+     }
+@@ -427,7 +427,7 @@ namespace swig
+ 	return swig::as<T>(item, true);
+       } catch (std::exception& e) {
+ 	char msg[1024];
+-	sprintf(msg, "in sequence element %d ", _index);
++	sprintf(msg, "in sequence element %d ", (int)_index);
+ 	if (!PyErr_Occurred()) {
+ 	  ::%type_error(swig::type_name<T>());
+ 	}
+@@ -445,7 +445,7 @@ namespace swig
+ 
+   private:
+     PyObject* _seq;
+-    int _index;
++    Py_ssize_t _index;
+   };
+ 
+   template <class T>
+@@ -466,13 +466,13 @@ namespace swig
+     typedef Reference reference;
+     typedef T value_type;
+     typedef T* pointer;
+-    typedef int difference_type;
++    typedef Py_ssize_t difference_type;
+ 
+     SwigPySequence_InputIterator()
+     {
+     }
+ 
+-    SwigPySequence_InputIterator(PyObject* seq, int index)
++    SwigPySequence_InputIterator(PyObject* seq, Py_ssize_t index)
+       : _seq(seq), _index(index)
+     {
+     }
+@@ -559,7 +559,7 @@ namespace swig
+     typedef const SwigPySequence_Ref<T> const_reference;
+     typedef T value_type;
+     typedef T* pointer;
+-    typedef int difference_type;
++    typedef Py_ssize_t difference_type;
+     typedef size_t size_type;
+     typedef const pointer const_pointer;
+     typedef SwigPySequence_InputIterator<T, reference> iterator;
+@@ -621,13 +621,13 @@ namespace swig
+ 
+     bool check(bool set_err = true) const
+     {
+-      int s = size();
+-      for (int i = 0; i < s; ++i) {
++      Py_ssize_t s = size();
++      for (Py_ssize_t i = 0; i < s; ++i) {
+ 	swig::SwigVar_PyObject item = PySequence_GetItem(_seq, i);
+ 	if (!swig::check<value_type>(item)) {
+ 	  if (set_err) {
+ 	    char msg[1024];
+-	    sprintf(msg, "in sequence element %d", i);
++	    sprintf(msg, "in sequence element %d", (int)i);
+ 	    SWIG_Error(SWIG_RuntimeError, msg);
+ 	  }
+ 	  return false;
+@@ -988,10 +988,9 @@ namespace swig {
+ %#endif
+       size_type size = seq.size();
+       if (size <= (size_type)INT_MAX) {
+-	PyObject *obj = PyTuple_New((int)size);
+-	int i = 0;
+-	for (const_iterator it = seq.begin();
+-	     it != seq.end(); ++it, ++i) {
++	PyObject *obj = PyTuple_New((Py_ssize_t)size);
++	Py_ssize_t i = 0;
++	for (const_iterator it = seq.begin(); it != seq.end(); ++it, ++i) {
+ 	  PyTuple_SetItem(obj,i,swig::from<value_type>(*it));
+ 	}
+ 	return obj;
+diff --git a/Lib/python/pyrun.swg b/Lib/python/pyrun.swg
+index d43b752..85ff276 100644
+--- a/Lib/python/pyrun.swg
++++ b/Lib/python/pyrun.swg
+@@ -161,7 +161,7 @@ SWIG_Python_AppendOutput(PyObject* result, PyObject* obj) {
+ 
+ /* Unpack the argument tuple */
+ 
+-SWIGINTERN int
++SWIGINTERN Py_ssize_t
+ SWIG_Python_UnpackTuple(PyObject *args, const char *name, Py_ssize_t min, Py_ssize_t max, PyObject **objs)
+ {
+   if (!args) {
+@@ -175,7 +175,7 @@ SWIG_Python_UnpackTuple(PyObject *args, const char *name, Py_ssize_t min, Py_ssi
+   }  
+   if (!PyTuple_Check(args)) {
+     if (min <= 1 && max >= 1) {
+-      int i;
++      Py_ssize_t i;
+       objs[0] = args;
+       for (i = 1; i < max; ++i) {
+ 	objs[i] = 0;
+@@ -195,7 +195,7 @@ SWIG_Python_UnpackTuple(PyObject *args, const char *name, Py_ssize_t min, Py_ssi
+ 		   name, (min == max ? "" : "at most "), (int)max, (int)l);
+       return 0;
+     } else {
+-      int i;
++      Py_ssize_t i;
+       for (i = 0; i < l; ++i) {
+ 	objs[i] = PyTuple_GET_ITEM(args, i);
+       }
+@@ -1515,13 +1515,11 @@ PyModule_AddObject(PyObject *m, char *name, PyObject *o)
+ {
+   PyObject *dict;
+   if (!PyModule_Check(m)) {
+-    PyErr_SetString(PyExc_TypeError,
+-		    "PyModule_AddObject() needs module as first arg");
++    PyErr_SetString(PyExc_TypeError, "PyModule_AddObject() needs module as first arg");
+     return SWIG_ERROR;
+   }
+   if (!o) {
+-    PyErr_SetString(PyExc_TypeError,
+-		    "PyModule_AddObject() needs non-NULL value");
++    PyErr_SetString(PyExc_TypeError, "PyModule_AddObject() needs non-NULL value");
+     return SWIG_ERROR;
+   }
+   
+diff --git a/Lib/python/pystrings.swg b/Lib/python/pystrings.swg
+index 2b14547..2eefaef 100644
+--- a/Lib/python/pystrings.swg
++++ b/Lib/python/pystrings.swg
+@@ -90,12 +90,12 @@ SWIG_FromCharPtrAndSize(const char* carray, size_t size)
+     } else {
+ %#if PY_VERSION_HEX >= 0x03000000
+ %#if PY_VERSION_HEX >= 0x03010000
+-      return PyUnicode_DecodeUTF8(carray, %numeric_cast(size,int), "surrogateescape");
++      return PyUnicode_DecodeUTF8(carray, %numeric_cast(size, Py_ssize_t), "surrogateescape");
+ %#else
+-      return PyUnicode_FromStringAndSize(carray, %numeric_cast(size,int));
++      return PyUnicode_FromStringAndSize(carray, %numeric_cast(size, Py_ssize_t));
+ %#endif
+ %#else
+-      return PyString_FromStringAndSize(carray, %numeric_cast(size,int));
++      return PyString_FromStringAndSize(carray, %numeric_cast(size, Py_ssize_t));
+ %#endif
+     }
+   } else {
+diff --git a/Lib/python/pywstrings.swg b/Lib/python/pywstrings.swg
+index 864376b..79f193b 100644
+--- a/Lib/python/pywstrings.swg
++++ b/Lib/python/pywstrings.swg
+@@ -58,7 +58,7 @@ SWIG_FromWCharPtrAndSize(const wchar_t * carray, size_t size)
+       return pwchar_descriptor ? 
+ 	SWIG_InternalNewPointerObj(%const_cast(carray,wchar_t *), pwchar_descriptor, 0) : SWIG_Py_Void();
+     } else {
+-      return PyUnicode_FromWideChar(carray, %numeric_cast(size,int));
++      return PyUnicode_FromWideChar(carray, %numeric_cast(size, Py_ssize_t));
+     }
+   } else {
+     return SWIG_Py_Void();
+diff --git a/Lib/python/std_map.i b/Lib/python/std_map.i
+index 454e821..65dd91d 100644
+--- a/Lib/python/std_map.i
++++ b/Lib/python/std_map.i
+@@ -119,10 +119,9 @@
+       static PyObject *asdict(const map_type& map) {
+ 	SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+ 	size_type size = map.size();
+-	int pysize = (size <= (size_type) INT_MAX) ? (int) size : -1;
++	Py_ssize_t pysize = (size <= (size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+ 	if (pysize < 0) {
+-	  PyErr_SetString(PyExc_OverflowError,
+-			  "map size not valid in python");
++	  PyErr_SetString(PyExc_OverflowError, "map size not valid in python");
+ 	  SWIG_PYTHON_THREAD_END_BLOCK;
+ 	  return NULL;
+ 	}
+@@ -211,17 +210,16 @@
+     
+     PyObject* keys() {
+       Map::size_type size = self->size();
+-      int pysize = (size <= (Map::size_type) INT_MAX) ? (int) size : -1;
++      Py_ssize_t pysize = (size <= (Map::size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+       SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+       if (pysize < 0) {
+-	PyErr_SetString(PyExc_OverflowError,
+-			"map size not valid in python");
++	PyErr_SetString(PyExc_OverflowError, "map size not valid in python");
+ 	SWIG_PYTHON_THREAD_END_BLOCK;
+ 	return NULL;
+       }
+       PyObject* keyList = PyList_New(pysize);
+       Map::const_iterator i = self->begin();
+-      for (int j = 0; j < pysize; ++i, ++j) {
++      for (Py_ssize_t j = 0; j < pysize; ++i, ++j) {
+ 	PyList_SET_ITEM(keyList, j, swig::from(i->first));
+       }
+       SWIG_PYTHON_THREAD_END_BLOCK;
+@@ -230,17 +228,16 @@
+     
+     PyObject* values() {
+       Map::size_type size = self->size();
+-      int pysize = (size <= (Map::size_type) INT_MAX) ? (int) size : -1;
++      Py_ssize_t pysize = (size <= (Map::size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+       SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+       if (pysize < 0) {
+-	PyErr_SetString(PyExc_OverflowError,
+-			"map size not valid in python");
++	PyErr_SetString(PyExc_OverflowError, "map size not valid in python");
+ 	SWIG_PYTHON_THREAD_END_BLOCK;
+ 	return NULL;
+       }
+       PyObject* valList = PyList_New(pysize);
+       Map::const_iterator i = self->begin();
+-      for (int j = 0; j < pysize; ++i, ++j) {
++      for (Py_ssize_t j = 0; j < pysize; ++i, ++j) {
+ 	PyList_SET_ITEM(valList, j, swig::from(i->second));
+       }
+       SWIG_PYTHON_THREAD_END_BLOCK;
+@@ -249,17 +246,16 @@
+     
+     PyObject* items() {
+       Map::size_type size = self->size();
+-      int pysize = (size <= (Map::size_type) INT_MAX) ? (int) size : -1;
++      Py_ssize_t pysize = (size <= (Map::size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+       SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+       if (pysize < 0) {
+-	PyErr_SetString(PyExc_OverflowError,
+-			"map size not valid in python");
++	PyErr_SetString(PyExc_OverflowError, "map size not valid in python");
+ 	SWIG_PYTHON_THREAD_END_BLOCK;
+ 	return NULL;
+       }    
+       PyObject* itemList = PyList_New(pysize);
+       Map::const_iterator i = self->begin();
+-      for (int j = 0; j < pysize; ++i, ++j) {
++      for (Py_ssize_t j = 0; j < pysize; ++i, ++j) {
+ 	PyList_SET_ITEM(itemList, j, swig::from(*i));
+       }
+       SWIG_PYTHON_THREAD_END_BLOCK;
+diff --git a/Lib/python/std_multimap.i b/Lib/python/std_multimap.i
+index c81e2ac..2c539cf 100644
+--- a/Lib/python/std_multimap.i
++++ b/Lib/python/std_multimap.i
+@@ -45,11 +45,10 @@
+ 	  return SWIG_InternalNewPointerObj(new multimap_type(multimap), desc, SWIG_POINTER_OWN);
+ 	} else {
+ 	  size_type size = multimap.size();
+-	  int pysize = (size <= (size_type) INT_MAX) ? (int) size : -1;
++	  Py_ssize_t pysize = (size <= (size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+ 	  if (pysize < 0) {
+ 	    SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+-	    PyErr_SetString(PyExc_OverflowError,
+-			    "multimap size not valid in python");
++	    PyErr_SetString(PyExc_OverflowError, "multimap size not valid in python");
+ 	    SWIG_PYTHON_THREAD_END_BLOCK;
+ 	    return NULL;
+ 	  }
+diff --git a/Lib/python/std_unordered_map.i b/Lib/python/std_unordered_map.i
+index e58a4e9..f956f4f 100644
+--- a/Lib/python/std_unordered_map.i
++++ b/Lib/python/std_unordered_map.i
+@@ -48,11 +48,10 @@
+ 	  return SWIG_NewPointerObj(new unordered_map_type(unordered_map), desc, SWIG_POINTER_OWN);
+ 	} else {
+ 	  size_type size = unordered_map.size();
+-	  int pysize = (size <= (size_type) INT_MAX) ? (int) size : -1;
++	  Py_ssize_t pysize = (size <= (size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+ 	  if (pysize < 0) {
+ 	    SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+-	    PyErr_SetString(PyExc_OverflowError,
+-			    "unordered_map size not valid in python");
++	    PyErr_SetString(PyExc_OverflowError, "unordered_map size not valid in python");
+ 	    SWIG_PYTHON_THREAD_END_BLOCK;
+ 	    return NULL;
+ 	  }
+@@ -164,17 +163,16 @@
+     
+     PyObject* keys() {
+       Map::size_type size = self->size();
+-      int pysize = (size <= (Map::size_type) INT_MAX) ? (int) size : -1;
++      Py_ssize_t pysize = (size <= (Map::size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+       if (pysize < 0) {
+ 	SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+-	PyErr_SetString(PyExc_OverflowError,
+-			"unordered_map size not valid in python");
++	PyErr_SetString(PyExc_OverflowError, "unordered_map size not valid in python");
+ 	SWIG_PYTHON_THREAD_END_BLOCK;
+ 	return NULL;
+       }
+       PyObject* keyList = PyList_New(pysize);
+       Map::const_iterator i = self->begin();
+-      for (int j = 0; j < pysize; ++i, ++j) {
++      for (Py_ssize_t j = 0; j < pysize; ++i, ++j) {
+ 	PyList_SET_ITEM(keyList, j, swig::from(i->first));
+       }
+       return keyList;
+@@ -182,17 +180,16 @@
+     
+     PyObject* values() {
+       Map::size_type size = self->size();
+-      int pysize = (size <= (Map::size_type) INT_MAX) ? (int) size : -1;
++      Py_ssize_t pysize = (size <= (Map::size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+       if (pysize < 0) {
+ 	SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+-	PyErr_SetString(PyExc_OverflowError,
+-			"unordered_map size not valid in python");
++	PyErr_SetString(PyExc_OverflowError, "unordered_map size not valid in python");
+ 	SWIG_PYTHON_THREAD_END_BLOCK;
+ 	return NULL;
+       }
+       PyObject* valList = PyList_New(pysize);
+       Map::const_iterator i = self->begin();
+-      for (int j = 0; j < pysize; ++i, ++j) {
++      for (Py_ssize_t j = 0; j < pysize; ++i, ++j) {
+ 	PyList_SET_ITEM(valList, j, swig::from(i->second));
+       }
+       return valList;
+@@ -200,17 +197,16 @@
+     
+     PyObject* items() {
+       Map::size_type size = self->size();
+-      int pysize = (size <= (Map::size_type) INT_MAX) ? (int) size : -1;
++      Py_ssize_t pysize = (size <= (Map::size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+       if (pysize < 0) {
+ 	SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+-	PyErr_SetString(PyExc_OverflowError,
+-			"unordered_map size not valid in python");
++	PyErr_SetString(PyExc_OverflowError, "unordered_map size not valid in python");
+ 	SWIG_PYTHON_THREAD_END_BLOCK;
+ 	return NULL;
+       }    
+       PyObject* itemList = PyList_New(pysize);
+       Map::const_iterator i = self->begin();
+-      for (int j = 0; j < pysize; ++i, ++j) {
++      for (Py_ssize_t j = 0; j < pysize; ++i, ++j) {
+ 	PyList_SET_ITEM(itemList, j, swig::from(*i));
+       }
+       return itemList;
+diff --git a/Lib/python/std_unordered_multimap.i b/Lib/python/std_unordered_multimap.i
+index adf86f2..b3b7236 100644
+--- a/Lib/python/std_unordered_multimap.i
++++ b/Lib/python/std_unordered_multimap.i
+@@ -45,11 +45,10 @@
+ 	  return SWIG_NewPointerObj(new unordered_multimap_type(unordered_multimap), desc, SWIG_POINTER_OWN);
+ 	} else {
+ 	  size_type size = unordered_multimap.size();
+-	  int pysize = (size <= (size_type) INT_MAX) ? (int) size : -1;
++	  Py_ssize_t pysize = (size <= (size_type) INT_MAX) ? (Py_ssize_t) size : -1;
+ 	  if (pysize < 0) {
+ 	    SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+-	    PyErr_SetString(PyExc_OverflowError,
+-			    "unordered_multimap size not valid in python");
++	    PyErr_SetString(PyExc_OverflowError, "unordered_multimap size not valid in python");
+ 	    SWIG_PYTHON_THREAD_END_BLOCK;
+ 	    return NULL;
+ 	  }
+diff --git a/Source/Modules/python.cxx b/Source/Modules/python.cxx
+index 570f8fa..e91047a 100644
+--- a/Source/Modules/python.cxx
++++ b/Source/Modules/python.cxx
+@@ -2473,15 +2473,15 @@ class PYTHON:public Language {
+ 
+     Printv(f->def, linkage, builtin_ctor ? "int " : "PyObject *", wname, "(PyObject *self, PyObject *args) {", NIL);
+ 
+-    Wrapper_add_local(f, "argc", "int argc");
++    Wrapper_add_local(f, "argc", "Py_ssize_t argc");
+     Printf(tmp, "PyObject *argv[%d] = {0}", maxargs + 1);
+     Wrapper_add_local(f, "argv", tmp);
+ 
+     if (!fastunpack) {
+-      Wrapper_add_local(f, "ii", "int ii");
++      Wrapper_add_local(f, "ii", "Py_ssize_t ii");
+       if (maxargs - (add_self ? 1 : 0) > 0)
+ 	Append(f->code, "if (!PyTuple_Check(args)) SWIG_fail;\n");
+-      Append(f->code, "argc = args ? (int)PyObject_Length(args) : 0;\n");
++      Append(f->code, "argc = args ? PyObject_Length(args) : 0;\n");
+       if (add_self)
+ 	Append(f->code, "argv[0] = self;\n");
+       Printf(f->code, "for (ii = 0; (ii < %d) && (ii < argc); ii++) {\n", add_self ? maxargs - 1 : maxargs);

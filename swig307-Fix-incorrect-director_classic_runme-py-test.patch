@@ -1,0 +1,24 @@
+From 3e9854d308b56488e3bcae69acb4618253b49a94 Mon Sep 17 00:00:00 2001
+From: William S Fulton <wsf@fultondesigns.co.uk>
+Date: Sat, 10 Oct 2015 01:17:32 +0100
+Subject: [PATCH] Fix incorrect director_classic_runme.py test
+
+Python 3.5 and -builtin threw an error as the incorrect base was being
+initialized.
+---
+ Examples/test-suite/python/director_classic_runme.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Examples/test-suite/python/director_classic_runme.py b/Examples/test-suite/python/director_classic_runme.py
+index 9dd5f59..a4d78f1 100644
+--- a/Examples/test-suite/python/director_classic_runme.py
++++ b/Examples/test-suite/python/director_classic_runme.py
+@@ -69,7 +69,7 @@ def id(self):
+ class TargetLangOrphanChild(OrphanChild):
+ 
+     def __init__(self):
+-        Child.__init__(self)
++        OrphanChild.__init__(self)
+ 
+     def id(self):
+         identifier = "TargetLangOrphanChild"

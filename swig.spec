@@ -33,7 +33,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.7
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -45,6 +45,23 @@ Patch1:  swig307-Fix-Ruby-trackings-code-to-use-C-hash.patch
 Patch2:  swig307-Ruby-trackings-patch-tidy-up.patch
 Patch3:  swig307-Ruby-trackings-support-for-1.8.patch
 Patch4:  swig-ccache-conflict-fix.patch
+
+###  Python 3.5 patches, will be part of SWIG 3.0.8
+###  https://github.com/swig/swig/issues/539 and more.
+#
+# https://github.com/swig/swig/commit/ef001de5240c1e05494e23b933b687f3f266045c
+Patch10:  swig307-Python35-fix-builtin.patch
+# https://github.com/swig/swig/commit/3e9854d308b56488e3bcae69acb4618253b49a94
+Patch11:  swig307-Fix-incorrect-director_classic_runme-py-test.patch
+# https://github.com/swig/swig/commit/4e8ea4e853efeca6782e905a75f83a5e704a5fb0
+Patch12:  swig307-Python-SystemError-fix-with-builtin.patch
+# https://github.com/swig/swig/commit/327b59a574c81437f79b168655feff04b12ce56d
+Patch13:  swig307-size_type-correction-for-SwigPySequence_Cont.patch
+# https://github.com/swig/swig/commit/c5322a9ecb2b9b13ad6300cf1675192a54f952c1
+Patch14:  swig307-Python-use-Py_ssize_t-instead-of-int-for-better-portability.patch
+# https://github.com/swig/swig/commit/625a405b8e42f944fdc1a87e36725f03b8817a85
+Patch15:  swig307-Add-python-inplace-operator-caveats-to-pyopers-swg.patch
+
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -112,6 +129,12 @@ This package contains documentation for SWIG and useful examples
 %patch2 -p1 -b .rubytidyup
 %patch3 -p1 -b .ruby18
 %patch4 -p1 -b .ccache-conflict
+%patch10 -p1 -b .python35-builtin
+%patch11 -p1 -b .python35-incorrect-director
+%patch12 -p1 -b .python35-systemerror-with-builtin
+%patch13 -p1 -b .python35-size_type-correction
+%patch14 -p1 -b .python35-use-Py_ssize_t
+%patch15 -p1 -b .python35-inplace-operator-caveats
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -211,6 +234,14 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Sun Dec 06 2015 Björn Esser <fedora@besser82.io> - 3.0.7-9
+- add Patch10: Python 3.5, -builtin, excess elements in struct initializer
+- add Patch11: Fix incorrect director_classic_runme.py test
+- add Patch12: Python SystemError fix with -builtin
+- add Patch13: size_type-correction for SwigPySequence_Cont
+- add Patch14: Python use Py_ssize_t instead of int for better portability
+- add Patch15: Add python inplace-operator caveats to pyopers.swg
+
 * Wed Oct 21 2015 David Sommerseth <davids@redhat.com> - 3.0.7-8
 - Ignore locally installed ccache when running CCache unit tests
 - Resolves: bz#1274031
