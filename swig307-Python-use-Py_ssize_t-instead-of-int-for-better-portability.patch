@@ -383,7 +383,7 @@ diff --git a/Source/Modules/python.cxx b/Source/Modules/python.cxx
 index 570f8fa..e91047a 100644
 --- a/Source/Modules/python.cxx
 +++ b/Source/Modules/python.cxx
-@@ -2473,15 +2473,15 @@ class PYTHON:public Language {
+@@ -2474,15 +2474,15 @@ class PYTHON:public Language {
  
      Printv(f->def, linkage, builtin_ctor ? "int " : "PyObject *", wname, "(PyObject *self, PyObject *args) {", NIL);
  

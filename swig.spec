@@ -33,7 +33,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.7
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -234,6 +234,9 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Sun Dec 06 2015 Björn Esser <fedora@besser82.io> - 3.0.7-10
+- fix hunk-offsets in patches
+
 * Sun Dec 06 2015 Björn Esser <fedora@besser82.io> - 3.0.7-9
 - add Patch10: Python 3.5, -builtin, excess elements in struct initializer
 - add Patch11: Fix incorrect director_classic_runme.py test
