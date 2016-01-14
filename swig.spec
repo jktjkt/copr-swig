@@ -33,12 +33,15 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 # Define the part of man page sections
 Source1: description.h2m
+Source2: description-ccache.h2m
+Source3: ccache-swig.sh
+Source4: ccache-swig.csh
 
 # Fixed python test li_boost_array on arm, ppc, s390
 # The failure was caused because "char" is not equivalent to "signed char"
@@ -94,6 +97,19 @@ with Perl, Python and Tcl/TK, but it has also been extended to Java,
 Eiffel and Guile. SWIG is normally used to create high-level
 interpreted programming environments, systems integration, and as a
 tool for building user interfaces
+
+%package -n ccache-swig
+Summary:   Fast compiler cache
+License:   GPLv2+
+Group:     Development/Tools
+Requires:  ccache
+Requires:  swig
+Conflicts: swig < 3.0.8-2
+
+%description -n ccache-swig
+ccache-swig is a compiler cache. It speeds up re-compilation of C/C++/SWIG
+code by caching previous compiles and detecting when the same compile is
+being done again. ccache-swig is ccache plus support for SWIG.
 
 %package doc
 Summary:   Documentation files for SWIG
@@ -166,48 +182,87 @@ popd
 
 make DESTDIR=%{buildroot} install
 
-# Use help output for generating of man page
-echo "Options:" >help_output
-%{buildroot}%{_bindir}/swig --help >>help_output
+#################################################
+# Use help output for generating of man page swig
+echo "Options:" >help_swig
+%{buildroot}%{_bindir}/swig --help >>help_swig
 
 # Update the output to be correctly formatted be help2man
-sed -i -e 's/^\(\s\+-[^-]\+\)- \(.*\)$/\1 \2/' help_output
-sed -i -e 's/^\(\s\+-\w\+-[^-]*\)- \(.*\)$/\1 \2/' help_output
+sed -i -e 's/^\(\s\+-[^-]\+\)- \(.*\)$/\1 \2/' help_swig
+sed -i -e 's/^\(\s\+-\w\+-[^-]*\)- \(.*\)$/\1 \2/' help_swig
 
 # Generate a helper script that will be used by help2man
-cat >h2m_helper <<'EOF'
+cat >h2m_helper_swig <<'EOF'
 #!/bin/bash
-[ "$1" == "--version" ] && echo "" || cat help_output
+[ "$1" == "--version" ] && echo "" || cat help_swig
 EOF
-chmod a+x h2m_helper
+chmod a+x h2m_helper_swig
 
 # Generate man page
-help2man -N --section 1 ./h2m_helper --include %{SOURCE1} -o %{name}.1
+help2man -N --section 1 ./h2m_helper_swig --include %{SOURCE1} -o %{name}.1
+
+########################################################
+# Use help output for generating of man page ccache-swig
+%{buildroot}%{_bindir}/ccache-swig -h >>help_ccache
+
+# Update the output to be correctly formatted be help2man
+sed -i -e '/compiler cache/ d' help_ccache
+sed -i -e '/Copyright/ d' help_ccache
+sed -i -e 's/^Usage:/[synopsis]/' help_ccache
+sed -i -e 's/^Options:/[options]/' help_ccache
+sed -i -e 's/^\s\+/ /' help_ccache
+sed -i -e 's/^\(-[^- ] <\w\+>\s\+\) \(\w.\+\)$/ \1 \2/' help_ccache
+sed -i -e 's/^\(-[^- ]\s\+\) \(\w.\+\)$/ \1 \2/' help_ccache
+
+# Generate a helper script that will be used by help2man
+cat >h2m_helper_ccache <<'EOF'
+#!/bin/bash
+[ "$1" == "--version" ] && echo ""
+[ "$1" == "--help" ] && echo "" || echo ""
+EOF
+chmod a+x h2m_helper_ccache
+
+cat %{SOURCE2} >>help_ccache
+sed -i -e 's#@DOCDIR@#%{_docdir}#' help_ccache
+
+# Generate man page
+help2man -N --section 1 ./h2m_helper_ccache --include help_ccache -o ccache-swig.1
 
 # Add man page for swig to repository
 mkdir -p %{buildroot}%{_mandir}/man1/
 install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
+install -p -m 0644 ccache-swig.1 %{buildroot}%{_mandir}/man1/
 
-# Enable ccache-swig by default, if ccache is installed.
-mkdir -p %{buildroot}%{_libdir}/ccache
-ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
+# Quiet some rpmlint complaints - remove empty file
+rm -f %{buildroot}%{_datadir}/%name/%{version}/octave/std_carray.i
+
+# Enable ccache-swig by default
+mkdir -p %{buildroot}%{_sysconfdir}/profile.d/
+install -dm 755 %{buildroot}%{_sysconfdir}/profile.d
+install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 
 %files
-%{_bindir}/*
+%{_bindir}/swig
 %{_datadir}/swig
-%{_libdir}/ccache
-# The man page was replaced by HTML page
-#%%{_mandir}/man1/ccache-swig.1*
 %{_mandir}/man1/swig.1*
 %license LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
 %doc ANNOUNCE CHANGES CHANGES.current
 %doc COPYRIGHT README TODO
+
+%files -n ccache-swig
+%{_bindir}/ccache-swig
+%config(noreplace) %{_sysconfdir}/profile.d/ccache-swig.*sh
+%{_mandir}/man1/ccache-swig.1*
 
 %files doc
 %license LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Thu Jan 14 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-2
+- Move ccache-swig to sub-package
+- Generate man page for ccache-swig from help
+
 * Mon Jan 04 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-1
 - Update to 3.0.8
 
@@ -326,7 +381,7 @@ ln -fs ../../bin/ccache-swig %{buildroot}%{_libdir}/ccache/swig
 - No golang or R on aarch64 (currently)
 
 * Tue Apr 22 2014 Karsten Hopp <karsten@redhat.com> 3.0.0-3
-- golang is exclusivearch %{ix86} x86_64 %{arm}, don't BR it on ppc*, s390*
+- golang is exclusivearch %%{ix86} x86_64 %%{arm}, don't BR it on ppc*, s390*
 - unit tests fail on other ppc archs, too. disable for now
 
 * Fri Mar 28 2014 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.0-2
