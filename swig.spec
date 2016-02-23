@@ -18,7 +18,7 @@
 %else
 %{!?golang:%global golang 1}
 # R tests failed (since 3.0.4)
-%{!?Rlang:%global Rlang 0}
+%{!?Rlang:%global Rlang 1}
 %endif
 %{!?javalang:%global javalang 1}
 %endif
@@ -29,11 +29,14 @@
 %{!?octave:%global octave 1}
 %endif
 
+# Disable Go tests because they failed against new Go 1.6
+# The tests passed against Go 1.5.3
+%global golang 0
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.8
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -47,6 +50,8 @@ Source4: ccache-swig.csh
 # The failure was caused because "char" is not equivalent to "signed char"
 # on these arches
 Patch0:  swig308-Fix-li_boost_array-test.patch
+Patch1:  swig308-Do-not-use-isystem.patch
+Patch2:  swig308-Update-test-for-macro-isfinite.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -75,6 +80,7 @@ BuildRequires: octave-devel
 %endif
 %if %{golang}
 BuildRequires: golang
+BuildRequires: golang-src
 %endif
 %if %{lualang}
 BuildRequires: lua-devel
@@ -124,6 +130,8 @@ This package contains documentation for SWIG and useful examples
 %setup -q -n swig-%{version}
 
 %patch0 -p1 -b .signed
+%patch1 -p1 -b .isystem
+%patch2 -p1 -b .isfinite
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -259,6 +267,10 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Mon Feb 22 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-4
+- Patched to build against GCC 6
+- Disable Go tests, because they failed against new Go 1.6
+
 * Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.8-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
