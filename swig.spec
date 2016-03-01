@@ -36,7 +36,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.8
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -51,7 +51,8 @@ Source4: ccache-swig.csh
 # on these arches
 Patch0:  swig308-Fix-li_boost_array-test.patch
 Patch1:  swig308-Do-not-use-isystem.patch
-Patch2:  swig308-Update-test-for-macro-isfinite.patch
+Patch2:  swig308-Python-Use-std-isfinite-under-C-11.patch
+
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -267,6 +268,9 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Tue Mar 01 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-5
+- Used updated upstream fix for GCC 6 issue
+
 * Mon Feb 22 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-4
 - Patched to build against GCC 6
 - Disable Go tests, because they failed against new Go 1.6
@@ -626,12 +630,12 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 - swig can determine architecture now (#211095)
 
 * Mon Aug 28 2006 Jitka Kudrnacova <jkudrnac@redhat.com> -1.3.29-1
--rebuilt 
+-rebuilt
 
 * Tue Jul 18 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.3
-- rebuilt 
+- rebuilt
 
-* Fri Jun 30 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.2 
+* Fri Jun 30 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.2
 - Build requires autoconf, automake (bug #197132)
 
 * Wed Apr 19 2006 Jitka Kudrnacova <jkudrnac@redhat.com> - 1.3.29-0.1
@@ -652,13 +656,13 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 * Wed Mar 02 2005 Phil Knirsch <pknirsch@redhat.com> 1.3.24-2
 - bump release and rebuild with gcc 4
 
-* Thu Feb 03 2005 Karsten Hopp <karsten@redhat.de> 1.3.24-1 
+* Thu Feb 03 2005 Karsten Hopp <karsten@redhat.de> 1.3.24-1
 - update
 
 * Wed Dec 01 2004 Phil Knirsch <pknirsch@redhat.com> 1.3.23-2
 - rebuild
 
-* Tue Nov 23 2004 Karsten Hopp <karsten@redhat.de> 1.3.23-1 
+* Tue Nov 23 2004 Karsten Hopp <karsten@redhat.de> 1.3.23-1
 - update
 - new pylib patch
 - remove destdir patch, swig.m4 is no longer included
@@ -771,7 +775,7 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 - rebuilt for 6.1
 
 * Thu Apr 15 1999 Michael Maher <mike@redhat.com>
-- built package for 6.0 
+- built package for 6.0
 
 * Tue Sep 15 1998 Michael Maher <mike@redhat.com>
 - built package
