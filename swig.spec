@@ -7,7 +7,7 @@
 
 %{!?rubylang:%global rubylang 1}
 
-%ifarch aarch64 %{arm} ppc64le ppc %{power64} s390 s390x
+%ifarch aarch64 %{arm} %{mips} ppc64le ppc %{power64} s390 s390x
 %{!?golang:%global golang 0}
 %{!?Rlang:%global Rlang 0}
 %{!?javalang:%global javalang 0}
@@ -17,7 +17,6 @@
 %{!?Rlang:%global Rlang 0}
 %else
 %{!?golang:%global golang 1}
-# R tests failed (since 3.0.4)
 %{!?Rlang:%global Rlang 1}
 %endif
 %{!?javalang:%global javalang 1}
@@ -36,7 +35,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.8
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -268,6 +267,9 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Fri Mar 11 2016 Michal Toman <mtoman@fedoraproject.org> - 3.0.8-6
+- Do not build R, Java and Go on MIPS
+
 * Tue Mar 01 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-5
 - Used updated upstream fix for GCC 6 issue
 
