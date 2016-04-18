@@ -28,14 +28,10 @@
 %{!?octave:%global octave 1}
 %endif
 
-# Disable Go tests because they failed against new Go 1.6
-# The tests passed against Go 1.5.3
-%global golang 0
-
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.8
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -51,6 +47,7 @@ Source4: ccache-swig.csh
 Patch0:  swig308-Fix-li_boost_array-test.patch
 Patch1:  swig308-Do-not-use-isystem.patch
 Patch2:  swig308-Python-Use-std-isfinite-under-C-11.patch
+Patch3:  swig308-Add-support-Go-1_6.patch
 
 
 BuildRequires: perl, python2-devel, pcre-devel
@@ -132,6 +129,7 @@ This package contains documentation for SWIG and useful examples
 %patch0 -p1 -b .signed
 %patch1 -p1 -b .isystem
 %patch2 -p1 -b .isfinite
+%patch3 -p1
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -267,6 +265,9 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Mon Apr 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-7
+- Add support for Go 1.6
+
 * Fri Mar 11 2016 Michal Toman <mtoman@fedoraproject.org> - 3.0.8-6
 - Do not build R, Java and Go on MIPS
 

@@ -1,0 +1,217 @@
+From 223c2a483563e5c9dd93067831a6a2af6252bcec Mon Sep 17 00:00:00 2001
+From: Ian Lance Taylor <iant@golang.org>
+Date: Sun, 17 Apr 2016 17:52:09 -0700
+Subject: [PATCH] [Go] Fixes for Go 1.6: avoid returning Go pointers from
+ directors that return string values; add a trailing 0 byte when treating Go
+ string as C char*.
+
+---
+# CHANGES.current                         |  5 +++++
+ Examples/test-suite/apply_strings.i     |  4 ++++
+ Examples/test-suite/go_inout.i          | 13 +++++++++++--
+ Examples/test-suite/namespace_typemap.i |  6 +++++-
+ Lib/go/go.swg                           | 30 +++++++++++++++++++++++++++---
+ Lib/go/goruntime.swg                    |  4 ++++
+ Lib/go/std_string.i                     | 26 +++++++++++++++++++++++++-
+ 7 files changed, 81 insertions(+), 7 deletions(-)
+
+#diff --git a/CHANGES.current b/CHANGES.current
+#index 8ab5627..c23a2d9 100644
+#--- a/CHANGES.current
+#+++ b/CHANGES.current
+#@@ -5,6 +5,11 @@ See the RELEASENOTES file for a summary of changes in each release.
+# Version 3.0.9 (in progress)
+# ===========================
+# 
+#+2016-04-17: ianlancetaylor
+#+	    [Go] Fixes for Go 1.6: avoid returning Go pointers from
+#+	    directors that return string values; add a trailing 0 byte
+#+	    when treating Go string as C char*.
+#+
+# 2016-04-06: smarchetto
+#             [Scilab] #552 Make Scilab runtime keep track of pointer types
+#             Instead of a Scilab pointer which has no type, SWIG Scilab maps a
+diff --git a/Examples/test-suite/apply_strings.i b/Examples/test-suite/apply_strings.i
+index 62b578b..695dd06 100644
+--- a/Examples/test-suite/apply_strings.i
++++ b/Examples/test-suite/apply_strings.i
+@@ -68,6 +68,10 @@ TAscii *DigitsGlobalC;
+ // Director test
+ %feature("director");
+ 
++#if defined(SWIGGO)
++%typemap(godirectorout) CharPtr, CCharPtr ""
++#endif
++
+ %inline %{
+   struct DirectorTest {
+     virtual UCharPtr UCharFunction(UCharPtr str) { return str; }
+diff --git a/Examples/test-suite/go_inout.i b/Examples/test-suite/go_inout.i
+index 57e7bf2..a174246 100644
+--- a/Examples/test-suite/go_inout.i
++++ b/Examples/test-suite/go_inout.i
+@@ -23,7 +23,7 @@ struct RetStruct {
+ 
+ // Write a typemap that calls C++ by converting in and out of JSON.
+ 
+-%go_import("encoding/json", "bytes", "encoding/binary")
++%go_import("encoding/json", "bytes", "encoding/binary", "reflect", "unsafe")
+ 
+ %insert(go_header)
+ %{
+@@ -87,6 +87,10 @@ struct MyArray {
+   std::vector<std::string> strings;
+ };
+ 
++void* Allocate(int n) {
++  return new char[n];
++}
++
+ static uint64_t getuint64(const char* s) {
+   uint64_t ret = 0;
+   for (int i = 0; i < 8; i++, s++) {
+@@ -121,7 +125,12 @@ static void putuint64(std::string *s, size_t off, uint64_t v) {
+ 			buf.Write(b[:])
+ 			buf.WriteString(s)
+ 		}
+-		str := buf.String()
++		bb := buf.Bytes()
++		p := Allocate(len(bb))
++		copy((*[1<<15]byte)(unsafe.Pointer(p))[:len(bb)], bb)
++		var str string
++		(*reflect.StringHeader)(unsafe.Pointer(&str)).Data = uintptr(unsafe.Pointer(p))
++		(*reflect.StringHeader)(unsafe.Pointer(&str)).Len = len(bb)
+ 		$result = &str
+ 	}
+ %}
+diff --git a/Examples/test-suite/namespace_typemap.i b/Examples/test-suite/namespace_typemap.i
+index 8ead78c..7f474bd 100644
+--- a/Examples/test-suite/namespace_typemap.i
++++ b/Examples/test-suite/namespace_typemap.i
+@@ -109,7 +109,11 @@ namespace test {
+ #ifdef SWIGGO
+ 	%typemap(gotype) string_class * "string"
+ 	%typemap(in) string_class * {
+-            $1 = new string_class($input.p);
++	    char* buf = new char[$input.n + 1];
++	    memcpy(buf, $input.p, $input.n);
++	    buf[$input.n] = '\0';
++	    $1 = new string_class(buf);
++	    delete[] buf;
+ 	}
+ 	%typemap(freearg) string_class * {
+ 	    delete $1;
+diff --git a/Lib/go/go.swg b/Lib/go/go.swg
+index 24f1b73..40e2741 100644
+--- a/Lib/go/go.swg
++++ b/Lib/go/go.swg
+@@ -435,10 +435,22 @@
+ 
+ %typemap(in)
+ 	char *, char[ANY], char[]
+-%{ $1 = ($1_ltype)$input.p; %}
++%{
++  $1 = ($1_ltype)malloc($input.n + 1);
++  memcpy($1, $input.p, $input.n);
++  $1[$input.n] = '\0';
++%}
+ 
+ %typemap(in) char *&
+-%{ $1 = ($1_ltype)$input.p; %}
++%{
++  $1 = ($1_ltype)malloc($input.n + 1);
++  memcpy($1, $input.p, $input.n);
++  $1[$input.n] = '\0';
++%}
++
++%typemap(freearg)
++	char *, char *&, char[ANY], char[]
++%{ free($1); %}
+ 
+ %typemap(out,fragment="AllocateString")
+ 	char *, char *&, char[ANY], char[]
+@@ -460,7 +472,19 @@
+   $result = swigCopyString($input)
+ %}
+ 
+-%typemap(directorout)
++%typemap(godirectorout)
++	char *, char *&, char[ANY], char[]
++%{
++  {
++    p := Swig_malloc(len($input) + 1)
++    s := (*[1<<30]byte)(unsafe.Pointer(p))[:len($input) + 1]
++    copy(s, $input)
++    s[len($input)] = 0
++    $result = *(*string)(unsafe.Pointer(&s))
++  }
++%}
++
++%typemap(directorout, warning=SWIGWARN_TYPEMAP_DIRECTOROUT_PTR_MSG)
+ 	char *, char *&, char[ANY], char[]
+ %{ $result = ($1_ltype)$input.p; %}
+ 
+diff --git a/Lib/go/goruntime.swg b/Lib/go/goruntime.swg
+index e7a33ad..dc6193d 100644
+--- a/Lib/go/goruntime.swg
++++ b/Lib/go/goruntime.swg
+@@ -8,6 +8,10 @@
+ static void Swig_free(void* p) {
+   free(p);
+ }
++
++static void* Swig_malloc(int c) {
++  return malloc(c);
++}
+ %}
+ 
+ %insert(runtime) %{
+diff --git a/Lib/go/std_string.i b/Lib/go/std_string.i
+index 068c688..099ae84 100644
+--- a/Lib/go/std_string.i
++++ b/Lib/go/std_string.i
+@@ -24,8 +24,21 @@ class string;
+ %typemap(in) string
+ %{ $1.assign($input.p, $input.n); %}
+ 
++%typemap(godirectorout) string
++%{
++  {
++    p := Swig_malloc(len($input))
++    s := (*[1<<30]byte)(unsafe.Pointer(p))[:len($input)]
++    copy(s, $input)
++    $result = *(*string)(unsafe.Pointer(&s))
++  }
++%}
++
+ %typemap(directorout) string
+-%{ $result.assign($input.p, $input.n); %}
++%{
++  $result.assign($input.p, $input.n);
++  free($input.p);
++%}
+ 
+ %typemap(out,fragment="AllocateString") string
+ %{ $result = Swig_AllocateString($1.data(), $1.length()); %}
+@@ -45,10 +58,21 @@ class string;
+   $1 = &$1_str;
+ %}
+ 
++%typemap(godirectorout) const string &
++%{
++  {
++    p := Swig_malloc(len($input))
++    s := (*[1<<30]byte)(unsafe.Pointer(p))[:len($input)]
++    copy(s, $input)
++    $result = *(*string)(unsafe.Pointer(&s))
++  }
++%}
++
+ %typemap(directorout,warning=SWIGWARN_TYPEMAP_THREAD_UNSAFE_MSG) const string &
+ %{
+   static $*1_ltype $1_str;
+   $1_str.assign($input.p, $input.n);
++  free($input.p);
+   $result = &$1_str;
+ %}
+ 
