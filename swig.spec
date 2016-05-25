@@ -31,7 +31,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.8
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -48,7 +48,7 @@ Patch0:  swig308-Fix-li_boost_array-test.patch
 Patch1:  swig308-Do-not-use-isystem.patch
 Patch2:  swig308-Python-Use-std-isfinite-under-C-11.patch
 Patch3:  swig308-Add-support-Go-1_6.patch
-
+Patch4:  swig308-Ruby-opaque-pointer-handling-regression-fix.patch
 
 BuildRequires: perl, python2-devel, pcre-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
@@ -130,6 +130,7 @@ This package contains documentation for SWIG and useful examples
 %patch1 -p1 -b .isystem
 %patch2 -p1 -b .isfinite
 %patch3 -p1
+%patch4 -p1 -b .ruby
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -265,6 +266,9 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 %doc Doc Examples COPYRIGHT
 
 %changelog
+* Wed May 25 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-8
+- Fix Ruby opaque pointer handling (bug #1299502)
+
 * Mon Apr 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.8-7
 - Add support for Go 1.6
 
