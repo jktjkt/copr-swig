@@ -31,7 +31,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -115,6 +115,15 @@ BuildArch: noarch
 
 %description doc
 This package contains documentation for SWIG and useful examples
+
+%package gdb
+Summary:   Commands for easier debugging of SWIG
+License:   BSD
+Requires:  swig
+
+%description gdb
+This package contains file with commands for easier debugging of SWIG
+in gdb.
 
 %prep
 %setup -q -n swig-%{version}
@@ -237,9 +246,14 @@ mkdir -p %{buildroot}%{_sysconfdir}/profile.d/
 install -dm 755 %{buildroot}%{_sysconfdir}/profile.d
 install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 
+# Add swig.gdb sub-package gdb
+mkdir -p %{buildroot}%{_datadir}/%{name}/gdb
+install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
+
 %files
-%{_bindir}/swig
-%{_datadir}/swig
+%{_bindir}/%{name}
+%{_datadir}/%{name}
+%exclude %{_datadir}/%{name}/gdb
 %{_mandir}/man1/swig.1*
 %license LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
 %doc ANNOUNCE CHANGES CHANGES.current
@@ -254,7 +268,13 @@ install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
 %license LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
 %doc Doc Examples COPYRIGHT
 
+%files gdb
+%{_datadir}/%{name}/gdb
+
 %changelog
+* Wed Oct 19 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.10-2
+- Sub-package file swig.gdb (bug #1332673)
+
 * Mon Jun 13 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.10-1
 - Update to 3.0.10
 
