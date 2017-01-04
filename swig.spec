@@ -2,7 +2,7 @@
 %bcond_without testsuite
 
 %{!?tcl:%global tcl 1}
-%{!?guile:%global guile 1}
+%{!?guile:%global guile 0}
 %{!?lualang:%global lualang 1}
 %{!?phplang:%global phplang 1}
 %{!?rubylang:%global rubylang 1}
@@ -283,6 +283,7 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 * Mon Jan 02 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.11-1
 - Update to 3.0.11
   - Add support for PHP 7
+  - Disable guile tests
 
 * Wed Oct 19 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.10-2
 - Sub-package file swig.gdb (bug #1332673)
