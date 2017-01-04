@@ -4,7 +4,7 @@
 %{!?tcl:%global tcl 1}
 %{!?guile:%global guile 1}
 %{!?lualang:%global lualang 1}
-
+%{!?phplang:%global phplang 1}
 %{!?rubylang:%global rubylang 1}
 
 %ifarch aarch64 %{arm} %{mips} ppc64le ppc %{power64} s390 s390x
@@ -25,13 +25,14 @@
 %if 0%{?rhel}
 %{!?octave:%global octave 0}
 %else
-%{!?octave:%global octave 1}
+# Disable octave tests, because swig doesn't support Octave 4.2.0
+%{!?octave:%global octave 0}
 %endif
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
-Version: 3.0.10
-Release: 2%{?dist}
+Version: 3.0.11
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -43,7 +44,8 @@ Source4: ccache-swig.csh
 
 Patch0:  swig308-Do-not-use-isystem.patch
 
-BuildRequires: perl, python2-devel, pcre-devel
+BuildRequires: perl, pcre-devel
+BuildRequires: python2-devel, python3-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
 BuildRequires: gcc-c++
 BuildRequires: help2man
@@ -83,6 +85,9 @@ BuildRequires: R-devel
 %endif
 %if %{javalang}
 BuildRequires: java, java-devel
+%endif
+%if %{phplang}
+BuildRequires: php, php-devel
 %endif
 
 %description
@@ -144,6 +149,9 @@ done
 # It causes that log had more then 600M.
 %configure \
   --without-ocaml \
+%if %{phplang}
+  --with-php=%{__php} \
+%endif
 %if ! %{javalang}
   --without-java \
 %endif
@@ -272,6 +280,10 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Mon Jan 02 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.11-1
+- Update to 3.0.11
+  - Add support for PHP 7
+
 * Wed Oct 19 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.10-2
 - Sub-package file swig.gdb (bug #1332673)
 
