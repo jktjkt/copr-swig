@@ -716,9 +716,33 @@ Index: swig-3.0.11/configure.ac
  fi
  
  AC_SUBST(OCTAVE)
+Index: swig-3.0.11/Lib/go/std_wstring.i
+===================================================================
+--- /dev/null
++++ swig-3.0.11/Lib/go/std_wstring.i
+@@ -0,0 +1 @@
++%include <typemaps/std_string.swg>
+Index: swig-3.0.11/Lib/lua/std_wstring.i
+===================================================================
+--- /dev/null
++++ swig-3.0.11/Lib/lua/std_wstring.i
+@@ -0,0 +1 @@
++%include <typemaps/std_string.swg>
 Index: swig-3.0.11/Lib/perl5/std_wstring.i
 ===================================================================
 --- /dev/null
 +++ swig-3.0.11/Lib/perl5/std_wstring.i
+@@ -0,0 +1 @@
++%include <typemaps/std_string.swg>
+Index: swig-3.0.11/Lib/php/std_wstring.i
+===================================================================
+--- /dev/null
++++ swig-3.0.11/Lib/php/std_wstring.i
+@@ -0,0 +1 @@
++%include <typemaps/std_string.swg>
+Index: swig-3.0.11/Lib/r/std_wstring.i
+===================================================================
+--- /dev/null
++++ swig-3.0.11/Lib/r/std_wstring.i
 @@ -0,0 +1 @@
 +%include <typemaps/std_string.swg>
