@@ -42,11 +42,12 @@ Source3: ccache-swig.sh
 Source4: ccache-swig.csh
 
 Patch0:  swig308-Do-not-use-isystem.patch
+Patch1:  https://github.com/swig/swig/commit/9e66af3fefa07fad0103f97eef8e1dc86b3498ba.patch#/swig-3.0.11_octave-no-core-dump.patch
 
 # Support for Octave 4.2.  Drop patch on v3.0.12 release.
 # Backported from https://github.com/swig/swig/pull/875.
 %if 0%{?fedora} >= 26
-Patch1:  swig-3.0.11_octave42.patch
+Patch2:  swig-3.0.11_octave42.patch
 %endif # 0#{?fedora} >= 26
 
 BuildRequires: perl, pcre-devel
@@ -139,8 +140,9 @@ in gdb.
 %setup -q -n swig-%{version}
 
 %patch0 -p1 -b .isystem
+%patch1 -p1 -b .ioctave_core_dump
 %if 0%{?fedora} >= 26
-%patch1 -p1 -b .ioctave42
+%patch2 -p1 -b .ioctave42
 %endif # 0#{?fedora} >= 26
 
 for all in CHANGES README; do
@@ -289,7 +291,9 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 
 %changelog
 * Sat Jan 14 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.11-2
-- Add Patch1 for Fedora >= 26, backported from upstream
+- Add Patch1 from upstream
+  - Do not dump Octave core in examples/test suite scripts
+- Add Patch2 for Fedora >= 26, backported from upstream
   - Support for Octave 4.2
 
 * Mon Jan 02 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.11-1

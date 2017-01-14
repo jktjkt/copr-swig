@@ -587,7 +587,7 @@ Index: swig-3.0.11/configure.ac
 ===================================================================
 --- swig-3.0.11.orig/configure.ac
 +++ swig-3.0.11/configure.ac
-@@ -1017,30 +1017,77 @@ OCTAVE_SO=.oct
+@@ -1018,30 +1018,77 @@ OCTAVE_SO=.oct
  AC_ARG_WITH(octave, AS_HELP_STRING([--without-octave], [Disable Octave])
  AS_HELP_STRING([--with-octave=path], [Set location of Octave executable]),[OCTAVEBIN="$withval"], [OCTAVEBIN="$alllang_default"])
  
@@ -673,7 +673,7 @@ Index: swig-3.0.11/configure.ac
     AC_MSG_CHECKING([for Octave preprocessor flags])
     OCTAVE_CPPFLAGS=
     for var in CPPFLAGS INCFLAGS ALL_CXXFLAGS; do
-@@ -1052,8 +1099,9 @@ if test -n "$OCTAVE"; then
+@@ -1053,8 +1100,9 @@ if test -n "$OCTAVE"; then
        done
     done
     AC_MSG_RESULT([$OCTAVE_CPPFLAGS])
@@ -684,7 +684,7 @@ Index: swig-3.0.11/configure.ac
     for var in ALL_CXXFLAGS; do
        for flag in `env - ${mkoctfile} -p ${var}`; do
           case ${flag} in
-@@ -1065,28 +1113,20 @@ if test -n "$OCTAVE"; then
+@@ -1066,28 +1114,20 @@ if test -n "$OCTAVE"; then
     save_CXXFLAGS="${CXXFLAGS}"
     CXXFLAGS="-Werror -O0"
     AC_COMPILE_IFELSE([
@@ -716,3 +716,9 @@ Index: swig-3.0.11/configure.ac
  fi
  
  AC_SUBST(OCTAVE)
+Index: swig-3.0.11/Lib/perl5/std_wstring.i
+===================================================================
+--- /dev/null
++++ swig-3.0.11/Lib/perl5/std_wstring.i
+@@ -0,0 +1 @@
++%include <typemaps/std_string.swg>
