@@ -19,12 +19,47 @@ Index: swig-3.0.11/.travis.yml
      - compiler: gcc
        os: linux
 -      env: SWIGLANG=octave SWIGJOBS=-j2 VER=4.0
-+      env: SWIGLANG=octave SWIGJOBS=-j2 VER=4.2
++      env: SWIGLANG=octave SWIGJOBS=-j2 VER=4.2 CPP11=1
 +      sudo: required
 +      dist: trusty
      - compiler: gcc
        os: linux
        env: SWIGLANG=perl5
+Index: swig-3.0.11/Doc/Manual/Octave.html
+===================================================================
+--- swig-3.0.11.orig/Doc/Manual/Octave.html
++++ swig-3.0.11/Doc/Manual/Octave.html
+@@ -64,8 +64,15 @@ Also, there are a dozen or so examples i
+ 
+ 
+ <p>
+-As of SWIG 3.0.7, the Octave module is regularly tested with Octave versions 3.2.4, 3.8.1, and 4.0.0.
+-Use of older Octave versions is not recommended, as these versions are no longer tested with SWIG.
++SWIG is regularly tested against the following versions of Octave: 3.8, 4.0, 4.2.
++</p>
++
++<p>
++Every effort is made to maintain backward compatibility with older versions of Octave.
++This cannot be guaranteed however, as in recent times new Octave releases have required nontrivial updates to SWIG, which may break backward compatibility for older Octave versions against which SWIG is not regularly tested.
++</p>
++
++<p>
+ The SWIG runtime exports the function <tt>swig_octave_prereq()</tt> for checking the version of Octave.
+ </p>
+ 
+Index: swig-3.0.11/Tools/travis-linux-install.sh
+===================================================================
+--- swig-3.0.11.orig/Tools/travis-linux-install.sh
++++ swig-3.0.11/Tools/travis-linux-install.sh
+@@ -64,7 +64,7 @@ case "$SWIGLANG" in
+ 		;;
+ 	"octave")
+ 		if [[ -z "$VER" ]]; then
+-			sudo apt-get -qq install octave3.2 octave3.2-headers
++			sudo apt-get -qq install liboctave-dev
+ 		else
+ 			sudo add-apt-repository -y ppa:kwwette/octaves
+ 			sudo apt-get -qq update
 Index: swig-3.0.11/CHANGES.current
 ===================================================================
 --- swig-3.0.11.orig/CHANGES.current
@@ -60,28 +95,6 @@ Index: swig-3.0.11/CHANGES.current
 +
  Version 3.0.11 (29 Dec 2016)
  ============================
- 
-Index: swig-3.0.11/Doc/Manual/Octave.html
-===================================================================
---- swig-3.0.11.orig/Doc/Manual/Octave.html
-+++ swig-3.0.11/Doc/Manual/Octave.html
-@@ -64,8 +64,15 @@ Also, there are a dozen or so examples i
- 
- 
- <p>
--As of SWIG 3.0.7, the Octave module is regularly tested with Octave versions 3.2.4, 3.8.1, and 4.0.0.
--Use of older Octave versions is not recommended, as these versions are no longer tested with SWIG.
-+SWIG is regularly tested against the following versions of Octave: 3.8, 4.0, 4.2.
-+</p>
-+
-+<p>
-+Every effort is made to maintain backward compatibility with older versions of Octave.
-+This cannot be guaranteed however, as in recent times new Octave releases have required nontrivial updates to SWIG, which may break backward compatibility for older Octave versions against which SWIG is not regularly tested.
-+</p>
-+
-+<p>
- The SWIG runtime exports the function <tt>swig_octave_prereq()</tt> for checking the version of Octave.
- </p>
  
 Index: swig-3.0.11/Examples/test-suite/exception_order.i
 ===================================================================
@@ -570,24 +583,18 @@ Index: swig-3.0.11/Lib/typemaps/fragments.swg
  inline int SWIG_isfinite_func(T x) {
    using namespace std;
    return isfinite(x);
-Index: swig-3.0.11/Tools/travis-linux-install.sh
-===================================================================
---- swig-3.0.11.orig/Tools/travis-linux-install.sh
-+++ swig-3.0.11/Tools/travis-linux-install.sh
-@@ -64,7 +64,7 @@ case "$SWIGLANG" in
- 		;;
- 	"octave")
- 		if [[ -z "$VER" ]]; then
--			sudo apt-get -qq install octave3.2 octave3.2-headers
-+			sudo apt-get -qq install liboctave-dev
- 		else
- 			sudo add-apt-repository -y ppa:kwwette/octaves
- 			sudo apt-get -qq update
 Index: swig-3.0.11/configure.ac
 ===================================================================
 --- swig-3.0.11.orig/configure.ac
 +++ swig-3.0.11/configure.ac
-@@ -1018,30 +1018,77 @@ OCTAVE_SO=.oct
+@@ -1015,35 +1015,90 @@ AC_SUBST(PERL5LDFLAGS)
+ OCTAVEBIN=
+ OCTAVE_SO=.oct
+ 
++OCTAVE_CPPFLAGS=
++OCTAVE_CXXFLAGS=
++OCTAVE_LDFLAGS=
++
  AC_ARG_WITH(octave, AS_HELP_STRING([--without-octave], [Disable Octave])
  AS_HELP_STRING([--with-octave=path], [Set location of Octave executable]),[OCTAVEBIN="$withval"], [OCTAVEBIN="$alllang_default"])
  
@@ -638,19 +645,24 @@ Index: swig-3.0.11/configure.ac
 +   AX_COMPARE_VERSION([${octave_version}],[ge],[4.2.0],[
 +     AC_MSG_RESULT([yes])
 +     AC_LANG_PUSH([C++])
++     # save variables modified by AX_CXX_COMPILE_STDCXX_11
 +     CXXFLAGS_SAVED=$CXXFLAGS
-+     CXXFLAGS=
++     CXX11FLAGS_SAVED=$CXX11FLAGS
++     HAVE_CXX11_COMPILER_SAVED=$HAVE_CXX11_COMPILER
 +     AX_CXX_COMPILE_STDCXX_11([noext], [nostop])
-+     CXXFLAGS=$CXXFLAGS_SAVED
-+     AC_LANG_POP([C++])
 +     AC_MSG_CHECKING([for C++11 enabled compiler])
 +     AS_IF([test "x${HAVE_CXX11_COMPILER}" = x],[
 +       AC_MSG_RESULT([no, disabling Octave])
 +       OCTAVE=
 +     ],[
 +       AC_MSG_RESULT([$HAVE_CXX11_COMPILER])
-+       OCTAVE_CXX11FLAGS="${CXX11FLAGS}"
++       OCTAVE_CXXFLAGS="${OCTAVE_CXXFLAGS} ${CXX11FLAGS}"
 +     ])
++     # restore variables modified by AX_CXX_COMPILE_STDCXX_11
++     CXXFLAGS=$CXXFLAGS_SAVED
++     CXX11FLAGS=$CXX11FLAGS_SAVED
++     HAVE_CXX11_COMPILER=$HAVE_CXX11_COMPILER_SAVED
++     AC_LANG_POP([C++])
     ],[
 -      AC_MSG_RESULT([not found, disabling Octave])
 +     AC_MSG_RESULT([no])
@@ -671,20 +683,21 @@ Index: swig-3.0.11/configure.ac
  if test -n "$OCTAVE"; then
 +
     AC_MSG_CHECKING([for Octave preprocessor flags])
-    OCTAVE_CPPFLAGS=
+-   OCTAVE_CPPFLAGS=
     for var in CPPFLAGS INCFLAGS ALL_CXXFLAGS; do
-@@ -1053,8 +1100,9 @@ if test -n "$OCTAVE"; then
+       for flag in `env - ${mkoctfile} -p ${var}`; do
+          case ${flag} in
+@@ -1053,8 +1108,8 @@ if test -n "$OCTAVE"; then
        done
     done
     AC_MSG_RESULT([$OCTAVE_CPPFLAGS])
 +
     AC_MSG_CHECKING([for Octave compiler flags])
 -   OCTAVE_CXXFLAGS=
-+   OCTAVE_CXXFLAGS="${OCTAVE_CXX11FLAGS}"
     for var in ALL_CXXFLAGS; do
        for flag in `env - ${mkoctfile} -p ${var}`; do
           case ${flag} in
-@@ -1066,28 +1114,20 @@ if test -n "$OCTAVE"; then
+@@ -1066,28 +1121,19 @@ if test -n "$OCTAVE"; then
     save_CXXFLAGS="${CXXFLAGS}"
     CXXFLAGS="-Werror -O0"
     AC_COMPILE_IFELSE([
@@ -697,7 +710,7 @@ Index: swig-3.0.11/configure.ac
     AC_MSG_RESULT([$OCTAVE_CXXFLAGS])
 +
     AC_MSG_CHECKING([for Octave linker flags])
-    OCTAVE_LDFLAGS=
+-   OCTAVE_LDFLAGS=
     for var in RDYNAMIC_FLAG LFLAGS RLD_FLAG OCTAVE_LIBS LIBS; do
       OCTAVE_LDFLAGS="${OCTAVE_LDFLAGS} "`env - ${mkoctfile} -p ${var}`
     done
@@ -716,33 +729,3 @@ Index: swig-3.0.11/configure.ac
  fi
  
  AC_SUBST(OCTAVE)
-Index: swig-3.0.11/Lib/go/std_wstring.i
-===================================================================
---- /dev/null
-+++ swig-3.0.11/Lib/go/std_wstring.i
-@@ -0,0 +1 @@
-+%include <typemaps/std_string.swg>
-Index: swig-3.0.11/Lib/lua/std_wstring.i
-===================================================================
---- /dev/null
-+++ swig-3.0.11/Lib/lua/std_wstring.i
-@@ -0,0 +1 @@
-+%include <typemaps/std_string.swg>
-Index: swig-3.0.11/Lib/perl5/std_wstring.i
-===================================================================
---- /dev/null
-+++ swig-3.0.11/Lib/perl5/std_wstring.i
-@@ -0,0 +1 @@
-+%include <typemaps/std_string.swg>
-Index: swig-3.0.11/Lib/php/std_wstring.i
-===================================================================
---- /dev/null
-+++ swig-3.0.11/Lib/php/std_wstring.i
-@@ -0,0 +1 @@
-+%include <typemaps/std_string.swg>
-Index: swig-3.0.11/Lib/r/std_wstring.i
-===================================================================
---- /dev/null
-+++ swig-3.0.11/Lib/r/std_wstring.i
-@@ -0,0 +1 @@
-+%include <typemaps/std_string.swg>
