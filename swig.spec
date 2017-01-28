@@ -279,7 +279,7 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
-* Thu Jan 26 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.12-1
+* Sat Jan 28 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.12-1
 - Update to 3.0.12
 - Drop Patch1 and Patch2, applied in upstream-tarball
 
