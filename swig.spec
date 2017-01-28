@@ -30,8 +30,8 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
-Version: 3.0.11
-Release: 2%{?dist}
+Version: 3.0.12
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -42,13 +42,6 @@ Source3: ccache-swig.sh
 Source4: ccache-swig.csh
 
 Patch0:  swig308-Do-not-use-isystem.patch
-Patch1:  https://github.com/swig/swig/commit/9e66af3fefa07fad0103f97eef8e1dc86b3498ba.patch#/swig-3.0.11_octave-no-core-dump.patch
-
-# Support for Octave 4.2.  Drop patch on v3.0.12 release.
-# Backported from https://github.com/swig/swig/pull/875.
-%if 0%{?fedora} >= 26
-Patch2:  swig-3.0.11_octave42.patch
-%endif # 0#{?fedora} >= 26
 
 BuildRequires: perl, pcre-devel
 BuildRequires: python2-devel, python3-devel
@@ -137,13 +130,9 @@ This package contains file with commands for easier debugging of SWIG
 in gdb.
 
 %prep
-%setup -q -n swig-%{version}
+%setup -q
 
 %patch0 -p1 -b .isystem
-%patch1 -p1 -b .ioctave_core_dump
-%if 0%{?fedora} >= 26
-%patch2 -p1 -b .ioctave42
-%endif # 0#{?fedora} >= 26
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -290,6 +279,10 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Thu Jan 26 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.12-1
+- Update to 3.0.12
+- Drop Patch1 and Patch2, applied in upstream-tarball
+
 * Sat Jan 14 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.11-2
 - Add Patch1 from upstream
   - Do not dump Octave core in examples/test suite scripts
