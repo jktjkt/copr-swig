@@ -17,7 +17,7 @@
 %{!?Rlang:%global Rlang 0}
 %else
 %{!?golang:%global golang 1}
-%{!?Rlang:%global Rlang 1}
+%{!?Rlang:%global Rlang 0}
 %endif
 %{!?javalang:%global javalang 1}
 %endif
@@ -25,13 +25,13 @@
 %if 0%{?rhel}
 %{!?octave:%global octave 0}
 %else
-%{!?octave:%global octave 1}
+%{!?octave:%global octave 0}
 %endif
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 2%{?dist}
+Release: 1%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -279,12 +279,10 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
-* Sat Jan 28 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.12-2
-- Rebuilt for Boost 1.63
-
 * Sat Jan 28 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.12-1
 - Update to 3.0.12
 - Drop Patch1 and Patch2, applied in upstream-tarball
+- Build without Octave and R testsuite, since they are broken due to GCC-7
 
 * Sat Jan 14 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.11-2
 - Add Patch1 from upstream
