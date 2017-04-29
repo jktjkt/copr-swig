@@ -31,7 +31,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -279,6 +279,9 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Sat Apr 29 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.12-6
+- Rebuilt for bootstrapping new arch: s390x
+
 * Mon Feb 13 2017 Björn Esser <besser82@fedoraproject.org> - 3.0.12-5
 - Rebuilt with R-testsuite enabled
 
