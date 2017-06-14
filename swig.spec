@@ -31,7 +31,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -42,6 +42,7 @@ Source3: ccache-swig.sh
 Source4: ccache-swig.csh
 
 Patch0:  swig308-Do-not-use-isystem.patch
+Patch1:  swig-3.0.12-Fix-testsuite-to-work-without-.-in-INC.patch
 
 BuildRequires: perl, pcre-devel
 BuildRequires: python2-devel, python3-devel
@@ -133,6 +134,7 @@ in gdb.
 %setup -q
 
 %patch0 -p1 -b .isystem
+%patch1 -p1
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -279,6 +281,9 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Wed Jun 14 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-8
+- Fixed tests to building on Perl 5.26 without dot in INC
+
 * Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.12-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
 
