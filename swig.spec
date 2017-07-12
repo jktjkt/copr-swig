@@ -44,7 +44,7 @@ Source4: ccache-swig.csh
 Patch0:  swig308-Do-not-use-isystem.patch
 Patch1:  swig-3.0.12-Fix-testsuite-to-work-without-.-in-INC.patch
 
-BuildRequires: perl, pcre-devel
+BuildRequires: perl-interpreter, pcre-devel
 BuildRequires: python2-devel, python3-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
 BuildRequires: gcc-c++
