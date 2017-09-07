@@ -31,7 +31,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -284,6 +284,9 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Thu Sep 07 2017 Jared Smith <jsmith@fedoraproject.org> - 3.0.12-11
+- Add patch to support NodeJS versions 7 and 8, fixes FTBFS
+
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.12-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
