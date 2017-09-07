@@ -43,6 +43,8 @@ Source4: ccache-swig.csh
 
 Patch0:  swig308-Do-not-use-isystem.patch
 Patch1:  swig-3.0.12-Fix-testsuite-to-work-without-.-in-INC.patch
+# Upstream pull request to support Node v7/v8
+Patch2:  https://patch-diff.githubusercontent.com/raw/swig/swig/pull/968/swig-node-v7.patch
 
 BuildRequires: perl-interpreter, pcre-devel
 BuildRequires: python2-devel, python3-devel
@@ -135,6 +137,7 @@ in gdb.
 
 %patch0 -p1 -b .isystem
 %patch1 -p1
+%patch2 -p1 -b .bak
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
