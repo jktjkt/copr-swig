@@ -1,0 +1,26 @@
+From 0a9113dcba2930b658cb67f9ba1c63ad8eebd88f Mon Sep 17 00:00:00 2001
+From: William S Fulton <wsf@fultondesigns.co.uk>
+Date: Tue, 19 Sep 2017 07:37:29 +0100
+Subject: [PATCH] Correct php testcase
+
+---
+ Examples/test-suite/php/preproc_constants_runme.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Examples/test-suite/php/preproc_constants_runme.php b/Examples/test-suite/php/preproc_constants_runme.php
+index ef32867..bd216c2 100644
+--- a/Examples/test-suite/php/preproc_constants_runme.php
++++ b/Examples/test-suite/php/preproc_constants_runme.php
+@@ -61,8 +61,8 @@ check::equal(gettype(preproc_constants::EXPR_OR), "integer", "preproc_constants.
+ check::equal(gettype(preproc_constants::EXPR_LAND), "boolean", "preproc_constants.EXPR_LAND has unexpected type");
+ check::equal(gettype(preproc_constants::EXPR_LOR), "boolean", "preproc_constants.EXPR_LOR has unexpected type");
+ check::equal(gettype(preproc_constants::EXPR_CONDITIONAL), "double", "preproc_constants.EXPR_CONDITIONAL has unexpected type");
++check::equal(gettype(preproc_constants::EXPR_MIXED1), "double", "preproc_constants.EXPR_MIXED1 has unexpected type");
+ check::equal(gettype(preproc_constants::EXPR_WCHAR_MAX), "integer", "preproc_constants.EXPR_WCHAR_MAX has unexpected type");
+ check::equal(gettype(preproc_constants::EXPR_WCHAR_MIN), "integer", "preproc_constants.EXPR_WCHAR_MIN has unexpected type");
+-check::equal(gettype(preproc_constants::EXPR_MIXED1), "integer", "preproc_constants.EXPR_MIXED1 has unexpected type");
+ 
+ ?>
+-- 
+2.9.5
+

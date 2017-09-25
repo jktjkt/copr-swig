@@ -31,7 +31,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -45,6 +45,11 @@ Patch0:  swig308-Do-not-use-isystem.patch
 Patch1:  swig-3.0.12-Fix-testsuite-to-work-without-.-in-INC.patch
 # Upstream pull request to support Node v7/v8
 Patch2:  https://patch-diff.githubusercontent.com/raw/swig/swig/pull/968/swig-node-v7.patch
+# Fix generated code for constant expressions containing wchar_t L
+# literals.
+Patch3:  swig-3.0.12-Fix-generated-code-for-constant-expressions-containi.patch
+Patch4:  swig-3.0.12-Fix-type-promotion-wrapping-some-non-trivial-constan.patch
+Patch5:  swig-3.0.12-Correct-php-testcase.patch
 
 BuildRequires: perl-interpreter, pcre-devel
 BuildRequires: python2-devel, python3-devel
@@ -63,6 +68,8 @@ BuildRequires: perl(Test::More)
 BuildRequires: perl(vars)
 BuildRequires: perl(warnings)
 BuildRequires: boost-devel
+# Need when Source/CParse/parser.y is patched
+BuildRequires: bison
 %if %{tcl}
 BuildRequires: tcl-devel
 %endif
@@ -138,6 +145,9 @@ in gdb.
 %patch0 -p1 -b .isystem
 %patch1 -p1
 %patch2 -p1 -b .bak
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -284,6 +294,10 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Wed Sep 20 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-12
+- Fix generated code for constant expressions containing wchar_t L
+  literals
+
 * Thu Sep 07 2017 Jared Smith <jsmith@fedoraproject.org> - 3.0.12-11
 - Add patch to support NodeJS versions 7 and 8, fixes FTBFS
 
