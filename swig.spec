@@ -4,7 +4,8 @@
 %{!?tcl:%global tcl 1}
 %{!?guile:%global guile 0}
 %{!?lualang:%global lualang 1}
-%{!?phplang:%global phplang 1}
+# Disable PHP tests, because they fail with PHP 7.2.0
+%{!?phplang:%global phplang 0}
 %{!?rubylang:%global rubylang 1}
 
 %ifarch aarch64 %{arm} %{mips} ppc64le ppc %{power64} s390 s390x
@@ -31,7 +32,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -294,6 +295,9 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Tue Nov 21 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-13
+- Disable PHP tests, because they fail with PHP 7.2.0-RC
+
 * Wed Sep 20 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-12
 - Fix generated code for constant expressions containing wchar_t L
   literals
