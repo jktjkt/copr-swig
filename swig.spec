@@ -32,7 +32,7 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -295,6 +295,9 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Tue Jan 23 2018 Jonathan Wakely <jwakely@redhat.com> - 3.0.12-14
+- Rebuilt for Boost 1.66
+
 * Tue Nov 21 2017 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-13
 - Disable PHP tests, because they fail with PHP 7.2.0-RC
 
