@@ -8,31 +8,30 @@
 %{!?phplang:%global phplang 0}
 %{!?rubylang:%global rubylang 1}
 
-%ifarch aarch64 %{arm} %{mips} ppc64le ppc %{power64} s390 s390x
-%{!?golang:%global golang 0}
-%{!?Rlang:%global Rlang 0}
-%{!?javalang:%global javalang 0}
-%else
 %if 0%{?rhel}
 %{!?golang:%global golang 0}
+%{!?octave:%global octave 0}
 %{!?Rlang:%global Rlang 0}
 %else
-%{!?golang:%global golang 1}
+%{!?octave:%global octave 1}
 %{!?Rlang:%global Rlang 1}
 %endif
+%ifarch aarch64 %{arm} %{mips} ppc64le ppc %{power64} s390 s390x
+%{!?javalang:%global javalang 0}
+%else
 %{!?javalang:%global javalang 1}
 %endif
 
-%if 0%{?rhel}
-%{!?octave:%global octave 0}
+%ifarch %{ix86} x86_64 %{arm} aarch64 ppc64le
+%{!?golang:%global golang 1}
 %else
-%{!?octave:%global octave 1}
+%{!?golang:%global golang 0}
 %endif
 
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
@@ -51,6 +50,7 @@ Patch2:  https://patch-diff.githubusercontent.com/raw/swig/swig/pull/968/swig-no
 Patch3:  swig-3.0.12-Fix-generated-code-for-constant-expressions-containi.patch
 Patch4:  swig-3.0.12-Fix-type-promotion-wrapping-some-non-trivial-constan.patch
 Patch5:  swig-3.0.12-Correct-php-testcase.patch
+Patch6:  swig-3.0.12-Fix-configure-for-Go-1_10.patch
 
 BuildRequires: perl-interpreter, pcre-devel
 BuildRequires: python2-devel, python3-devel
@@ -82,6 +82,7 @@ BuildRequires: octave-devel
 %endif
 %if %{golang}
 BuildRequires: golang
+BuildRequires: golang-shared
 BuildRequires: golang-src
 %endif
 %if %{lualang}
@@ -149,6 +150,7 @@ in gdb.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -295,6 +297,10 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Wed Feb 14 2018 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-16
+- Update conditions for tests
+- Fix configure to properly check version of Go 1.10
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.12-15
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
