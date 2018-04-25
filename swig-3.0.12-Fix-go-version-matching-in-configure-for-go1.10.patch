@@ -1,0 +1,51 @@
+From 5f6012039abb6ec9e9dfea801effa6b02fd102bc Mon Sep 17 00:00:00 2001
+From: Vsevolod Kvachev <rasielll@gmail.com>
+Date: Thu, 19 Apr 2018 23:04:37 +0300
+Subject: [PATCH] Fix go version matching in configure for go1.10
+
+---
+ configure.ac | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 833cb37bf..ba1631743 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2597,7 +2597,7 @@ else
+     GOVERSIONOPTION=version
+     go_version=$($GO $GOVERSIONOPTION | sed -e 's/go version //')
+     case "$go_version" in
+-    go1 | go1.[[01234]]*)
++    go1 | go1.[[01234]] | go1.[[01234]].*)
+       GOC=$(sh -c "$(go env) && echo \$GOCHAR")c
+       ;;
+     *)
+@@ -2606,7 +2606,7 @@ else
+     esac
+     AC_MSG_CHECKING([whether go version is too old])
+     case $go_version in
+-    go1.1* | go1.0* | go1 )
++    go1.1.* | go1.1 | go1.0 | go1.0.* | go1 )
+       AC_MSG_RESULT([yes - minimum version is 1.2])
+       GO=
+       GOOPT="-intgosize 32"
+@@ -2624,13 +2624,13 @@ else
+       ;;
+     esac
+     case $go_version in
+-    go1.0* | go1 | go1.1*)
++    go1.0 | go1.0.* | go1 | go1.1 | go1.1.*)
+       GOOPT="$GOOPT -use-shlib"
+       ;;
+-    go1.2*)
++    go1.2 | go1.2.*)
+       GO12=true
+       ;;
+-    go1.3* | go1.4*)
++    go1.3 | go1.3.* | go1.4 | go1.4.*)
+       GO13=true
+       ;;
+     *)
+-- 
+2.14.3
+

@@ -12,9 +12,11 @@
 %{!?golang:%global golang 0}
 %{!?octave:%global octave 0}
 %{!?Rlang:%global Rlang 0}
+%bcond_with build_ccache_swig
 %else
 %{!?octave:%global octave 1}
 %{!?Rlang:%global Rlang 1}
+%bcond_without build_ccache_swig
 %endif
 %ifarch aarch64 %{arm} %{mips} ppc64le ppc %{power64} s390 s390x
 %{!?javalang:%global javalang 0}
@@ -31,15 +33,17 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages
 Name:    swig
 Version: 3.0.12
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 # Define the part of man page sections
 Source1: description.h2m
+%if %{with build_ccache_swig}
 Source2: description-ccache.h2m
 Source3: ccache-swig.sh
 Source4: ccache-swig.csh
+%endif
 
 Patch0:  swig308-Do-not-use-isystem.patch
 Patch1:  swig-3.0.12-Fix-testsuite-to-work-without-.-in-INC.patch
@@ -50,7 +54,12 @@ Patch2:  https://patch-diff.githubusercontent.com/raw/swig/swig/pull/968/swig-no
 Patch3:  swig-3.0.12-Fix-generated-code-for-constant-expressions-containi.patch
 Patch4:  swig-3.0.12-Fix-type-promotion-wrapping-some-non-trivial-constan.patch
 Patch5:  swig-3.0.12-Correct-php-testcase.patch
-Patch6:  swig-3.0.12-Fix-configure-for-Go-1_10.patch
+Patch6:  swig-3.0.12-Fix-go-version-matching-in-configure-for-go1.10.patch
+# Backport upstream Coverity fixes (BZ# 1570037)
+Patch7:  swig-3.0.12-Coverity-fix-issue-reported-for-SWIG_Python_FixMetho.patch
+Patch8:  swig-3.0.12-Fix-Coverity-issue-reported-for-setslice-pycontainer.patch
+Patch9:  swig-3.0.12-Coverity-fix-issue-reported-for-wrapper-argument-che.patch
+Patch10: swig-3.0.12-Coverity-fix-issue-reported-for-SWIG_Python_ConvertF.patch
 
 BuildRequires: perl-interpreter, pcre-devel
 BuildRequires: python2-devel, python3-devel
@@ -110,11 +119,11 @@ Eiffel and Guile. SWIG is normally used to create high-level
 interpreted programming environments, systems integration, and as a
 tool for building user interfaces
 
+%if %{with build_ccache_swig}
 %package -n ccache-swig
 Summary:   Fast compiler cache
 License:   GPLv2+
 Group:     Development/Tools
-Requires:  ccache
 Requires:  swig
 Conflicts: swig < 3.0.8-2
 
@@ -122,6 +131,7 @@ Conflicts: swig < 3.0.8-2
 ccache-swig is a compiler cache. It speeds up re-compilation of C/C++/SWIG
 code by caching previous compiles and detecting when the same compile is
 being done again. ccache-swig is ccache plus support for SWIG.
+%endif
 
 %package doc
 Summary:   Documentation files for SWIG
@@ -151,6 +161,10 @@ in gdb.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 for all in CHANGES README; do
     iconv -f ISO88591 -t UTF8 < $all > $all.new
@@ -181,6 +195,9 @@ done
 %if %{octave}
   --with-octave=/usr/bin/octave \
   --without-maximum-compile-warnings \
+%endif
+%if %{without build_ccache_swig}
+  --disable-ccache \
 %endif
 ;
 make %{?_smp_mflags}
@@ -231,6 +248,7 @@ chmod a+x h2m_helper_swig
 # Generate man page
 help2man -N --section 1 ./h2m_helper_swig --include %{SOURCE1} -o %{name}.1
 
+%if %{with build_ccache_swig}
 ########################################################
 # Use help output for generating of man page ccache-swig
 %{buildroot}%{_bindir}/ccache-swig -h >>help_ccache
@@ -257,19 +275,24 @@ sed -i -e 's#@DOCDIR@#%{_docdir}#' help_ccache
 
 # Generate man page
 help2man -N --section 1 ./h2m_helper_ccache --include help_ccache -o ccache-swig.1
+%endif
 
 # Add man page for swig to repository
 mkdir -p %{buildroot}%{_mandir}/man1/
 install -p -m 0644 %{name}.1 %{buildroot}%{_mandir}/man1/
+%if %{with build_ccache_swig}
 install -p -m 0644 ccache-swig.1 %{buildroot}%{_mandir}/man1/
+%endif
 
 # Quiet some rpmlint complaints - remove empty file
 rm -f %{buildroot}%{_datadir}/%name/%{version}/octave/std_carray.i
 
+%if %{with build_ccache_swig}
 # Enable ccache-swig by default
 mkdir -p %{buildroot}%{_sysconfdir}/profile.d/
 install -dm 755 %{buildroot}%{_sysconfdir}/profile.d
 install -pm 644 %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/profile.d
+%endif
 
 # Add swig.gdb sub-package gdb
 mkdir -p %{buildroot}%{_datadir}/%{name}/gdb
@@ -284,10 +307,12 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %doc ANNOUNCE CHANGES CHANGES.current
 %doc COPYRIGHT README TODO
 
+%if %{with build_ccache_swig}
 %files -n ccache-swig
 %{_bindir}/ccache-swig
 %config(noreplace) %{_sysconfdir}/profile.d/ccache-swig.*sh
 %{_mandir}/man1/ccache-swig.1*
+%endif
 
 %files doc
 %license LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
@@ -297,6 +322,10 @@ install -pm 644 Tools/swig.gdb %{buildroot}%{_datadir}/%{name}/gdb
 %{_datadir}/%{name}/gdb
 
 %changelog
+* Tue Apr 24 2018 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-17
+- Backport upstream Coverity fixes (bug#1570037)
+- Do not build ccache-swig on RHEL
+
 * Wed Feb 14 2018 Jitka Plesnikova <jplesnik@redhat.com> - 3.0.12-16
 - Update conditions for tests
 - Fix configure to properly check version of Go 1.10
