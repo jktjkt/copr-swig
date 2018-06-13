@@ -1,12 +1,12 @@
 # We can skip tests
 %bcond_without testsuite
 
-%{!?tcl:%global tcl 1}
+%{!?tcl:%global tcl 0}
 %{!?guile:%global guile 0}
-%{!?lualang:%global lualang 1}
+%{!?lualang:%global lualang 0}
 # Disable PHP tests, because they fail with PHP 7.2.0
 %{!?phplang:%global phplang 0}
-%{!?rubylang:%global rubylang 1}
+%{!?rubylang:%global rubylang 0}
 
 %if 0%{?rhel}
 %{!?golang:%global golang 0}
@@ -21,11 +21,11 @@
 %ifarch aarch64 %{arm} %{mips} ppc64le ppc %{power64} s390 s390x
 %{!?javalang:%global javalang 0}
 %else
-%{!?javalang:%global javalang 1}
+%{!?javalang:%global javalang 0}
 %endif
 
 %ifarch %{ix86} x86_64 %{arm} aarch64 ppc64le
-%{!?golang:%global golang 1}
+%{!?golang:%global golang 0}
 %else
 %{!?golang:%global golang 0}
 %endif
