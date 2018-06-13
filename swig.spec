@@ -61,8 +61,8 @@ Patch8:  swig-3.0.12-Fix-Coverity-issue-reported-for-setslice-pycontainer.patch
 Patch9:  swig-3.0.12-Coverity-fix-issue-reported-for-wrapper-argument-che.patch
 Patch10: swig-3.0.12-Coverity-fix-issue-reported-for-SWIG_Python_ConvertF.patch
 
-BuildRequires: perl-interpreter, pcre-devel
-BuildRequires: python2-devel, python3-devel
+BuildRequires: perl-devel, pcre-devel
+BuildRequires: python2-devel
 BuildRequires: autoconf, automake, gawk, dos2unix
 BuildRequires: gcc-c++
 BuildRequires: help2man
