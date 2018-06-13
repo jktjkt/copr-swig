@@ -36,7 +36,7 @@ Version: 3.0.12
 Release: 17%{?dist}
 License: GPLv3+ and BSD
 URL:     http://swig.sourceforge.net/
-Source0: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
+Source0: https://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 # Define the part of man page sections
 Source1: description.h2m
 %if %{with build_ccache_swig}
